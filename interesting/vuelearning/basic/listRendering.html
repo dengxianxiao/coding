@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>list rendering</title>
+</head>
+<body>
+  
+  <div id="vm1">
+    <ul>
+      <li v-for="(item, index) in items">
+        {{ index }} - {{ item.message }}
+      </li>
+    </ul>
+    <button @click="filterData">filterData</button>
+  </div>
+  <div id="vm2">
+    <ul>
+      <li v-for="(value, key, index) in object" :key="key">
+       {{ index }}. {{ key }} - {{ value }}
+      </li>
+    </ul>
+  </div>
+  <div id="vm3">
+    <ul>
+      <li v-for="num in eventNumbers">
+        {{ num }}
+      </li>
+    </ul>
+  </div>
+  <div id="vm4">
+    <ul>
+      <template v-for="(item, index) in items">
+        <li>{{ item.message }}</li>
+        <li> {{ index }} </li>
+      </template>
+    </ul>
+  </div>
+  <div id="vm5">
+    <ul>
+      <li v-for="item in items" v-if="item.isComplete">
+        {{ item.message }}
+      </li>
+    </ul>
+  </div>
+  <div id="vm6">
+    <ul v-if="items.length">
+      <li v-for="item in items">
+        {{ item.message}}
+      </li>
+    </ul>
+  </div>
+  <div id="vm7">
+    <input 
+      v-model="newTodoText"
+      @keyup.enter="addNewTodo"  
+      placeholder="Add a todo"
+    >
+    <ul>
+      <li
+        is="todo-item"
+        v-for="(todo, index) in todos"
+        :key="todo.id"
+        :title="todo.title"
+        @remove="todos.splice(index, 1)"
+      ></li>
+    </ul>
+  </div>
+  <script src="../../../static/js/vue.js"></script>
+  <script>
+    /* global Vue */
+    var vm1 = new Vue({
+      el: '#vm1',
+      data: {
+        items: [
+          { message: 'Foo' },
+          { message: 'Bar' }
+        ]
+      },
+      methods: {
+        filterData: function () {
+          this.items = this.items.filter(function (item) {
+            console.log(item)
+            return item.message.match(/Foo/)
+          })
+        }
+      }
+    })
+    var vm2 = new Vue({
+      el: '#vm2',
+      data: {
+        object: {
+          firstName: 'haha',
+          lastName: 'hehe',
+          age: 20
+        }
+      }
+    })
+    var vm3 = new Vue({
+      el: '#vm3',
+      data: {
+        numbers: [1, 2, 3, 4, 5]
+      },
+      computed: {
+        eventNumbers: function () {
+          return this.numbers.filter(function (num) {
+            return num % 2 === 0
+          })
+        }
+      }
+    })
+    var vm4 = new Vue({
+      el: '#vm4',
+      data: {
+        items: [
+          { message: 'hahah' },
+          { message: 'hehe' },
+          { message: 'hheieh' }
+        ]
+      }
+    })
+    var vm5 = new Vue({
+      el: '#vm5',
+      data: {
+        items: [
+          {
+            message: 'aa',
+            isComplete: true
+          },
+          {
+            message: 'bb',
+            isComplete: true
+          },
+          {
+            message: 'cc',
+            isComplete: false
+          }
+        ]
+      }
+    })
+    var vm6 = new Vue({
+      el: '#vm6',
+      data: {
+        items: [
+          {
+            message: 'aa',
+            isComplete: true
+          },
+          {
+            message: 'bb',
+            isComplete: true
+          },
+          {
+            message: 'cc',
+            isComplete: false
+          }
+        ]
+      }
+    })
+    Vue.component('todo-item', {
+      template: '\
+        <li>\
+          {{ title }}\
+          <button v-on:click="$emit(\'remove\')">X</button>\
+        </li>\
+      ',
+      props: ['title']
+    })
+    var vm7 = new Vue({
+      el: '#vm7',
+      data: {
+        newTodoText: '',
+        todos: [
+          {
+            id: 1,
+            title: 'Do the dishes'
+          },
+          {
+            id: 2,
+            title: 'Take out the trash'
+          },
+          {
+            id: 3,
+            title: 'Mow the lawn'
+          }
+        ],
+        nextTodoId: 4
+      },
+      methods: {
+        addNewTodo: function () {
+          this.todos.push({
+            id: this.nextTodoId++,
+            title: this.newTodoText
+          })
+          this.newTodoText = ''
+        }
+      }
+    })
+  </script>
+</body>
+</html>

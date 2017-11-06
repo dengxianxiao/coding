@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>form input binding</title>
+</head>
+<body>
+  <div id="vm1">
+    <input v-model="message" placeholder="edit me">
+    <p>Message is : {{ message }}</p>
+    <br>
+    <textarea v-model="multilineMessage" placeholder="add multiline text"></textarea>
+    <br>
+    <span>multiline message is:</span>
+    <p style="white-space: pre-line;"> {{ multilineMessage }}</p>
+  </div>
+  <div id="vm2">
+    <input type="checkbox" id="checkbox" v-model="checked">
+    <label for="checkbox">
+      {{ checked }}
+    </label>
+  </div>
+  <div id="vm3">
+    <input type="checkbox" id="jack" value="Jack" v-model="checkedNames">
+    <label for="jack">Jack</label>
+    <input type="checkbox" id="john" value="John" v-model="checkedNames">
+    <label for="john">John</label>
+    <input type="checkbox" id="mike" value="Mike" v-model="checkedNames">
+    <label for="mike">Mike</label>
+    <br>
+    <p>Checked name: {{ checkedNames }}</p>
+  </div>
+  <div id="vm4">
+    <input type="radio" id="one" value="one" v-model="picked">
+    <label for="one">one</label>
+    <br>
+    <input type="radio" id="two" value="two" v-model="picked">
+    <label for="two">two</label>
+    <br>
+    <span>Picked: {{ picked }}</span>
+  </div>
+  <div id="vm5">
+    <select v-model="selected">
+      <option disabled value="">please select</option>
+      <option>A</option>
+      <option>B</option>
+      <option>C</option>
+    </select>
+    <br><br>
+    <select v-model="multilineSelected" multiple style="width: 100px">
+        <option>A</option>
+        <option>B</option>
+        <option>C</option>
+      </select>
+    <span>selected value: {{ multilineSelected }}</span>
+  </div>
+  <div id="vm6">
+    <select v-model="selected">
+      <option v-for="option in options" :value="option.value">
+        {{ option.text }}
+      </option>
+    </select>
+    <br>
+    <span>Selected: {{ selected }}</span>
+    
+  </div>
+  <div id="vm7">
+    <input type="radio" v-model="picked" value="a">
+    <input type="checkbox" v-model="toggle">
+    <select v-model="selected">
+      <option value="abc">ABC</option>
+    </select>
+    <input type="checkbox" v-model="toggleValue" :true-value="aa" :false-value="bb">
+    <input type="radio" v-model="pickedValue" :value="cc">
+    <select v-model="selectedValue">
+      <option :value="{ number: 123 }">123</option>
+    </select>
+    <br>
+    <p>Picked value: {{ picked }}</p>
+    <p>Toggle value: {{ toggle }}</p>
+    <p>Select value: {{ selected }}</p>
+    <p>ToggleValue: {{toggleValue }}</p>
+    <p>pickedValue: {{ pickedValue }}</p>
+    <p>SelectedValue: {{ selectedValue }}</p>
+  </div>
+  <div id="vm8">
+    <input v-model.lazy="inputLazy"> 
+    <p>InputLazy value: {{ inputLazy }}</p>
+    <input type="number" v-model.number="age">
+    <p>Age value: {{ age }}</p>
+    <input v-model.trim="message">
+    <p>Mesage trim: {{ message }}</p>
+  </div>
+  <script src="../../../static/js/vue.js"></script>
+  <script>
+    /* global Vue */
+    var vm1 = new Vue({
+      el: '#vm1',
+      data: {
+        message: '',
+        multilineMessage: ''
+      }
+    })
+    var vm2 = new Vue({
+      el: '#vm2',
+      data: {
+        checked: false
+      }
+    })
+    var vm3 = new Vue({
+      el: '#vm3',
+      data: {
+        checkedNames: []
+      }
+    })
+    var vm4 = new Vue({
+      el: '#vm4',
+      data: {
+        picked: ''
+      }
+    })
+    var vm5 = new Vue({
+      el: '#vm5',
+      data: {
+        selected: '',
+        multilineSelected: []
+      }
+    })
+    var vm6 = new Vue({
+      el: '#vm6',
+      data: {
+        selected: 'A',
+        options: [
+          { text: 'one', value: 'A' },
+          { text: 'two', value: 'B' },
+          { text: 'three', value: 'C' }
+        ]
+      }
+    })
+    var vm7 = new Vue({
+      el: '#vm7',
+      data: {
+        picked: '',
+        toggle: '',
+        selected: '',
+        toggleValue: '',
+        aa: 'hahaha',
+        bb: 'hehehehh',
+        pickedValue: '',
+        cc: 'asdfsadf',
+        selectedValue: ''
+      }
+    })
+    var vm8 = new Vue({
+      el: '#vm8',
+      data: {
+        inputLazy: '',
+        age: '',
+        message: ''
+      }
+    })
+  </script>
+</body>
+</html>

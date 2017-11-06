@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>template syntax</title>
+</head>
+<body>
+  <div id="vm1">
+    message: {{ msg }}
+    <br>
+    <span v-once>notChangeMessage: {{ notChangeMessage }}</span>
+  </div>
+  <div v-html="rawHtml"></div>
+  <div id="vm2" v-bind:id="dynamicId">
+    动态id : {{ dynamicId }}
+  </div>
+  <button id="vm3" v-bind:disabled="isButtonDisabled">haha</button>
+  <div id="vm4">
+    {{ number + 1 }}
+    <br>
+    {{ ok ? 'YES' : 'NO' }}
+    <br>
+    {{ message.split('').reverse().join('') }}
+    <br>
+    <div v-bind:id="'list-' + id">
+      v-bind:id = {{ id }}
+    </div>
+  </div>
+  <div id="vm5">
+    <p v-if="seen">now you can see me</p>
+    <a v-bind:href="url">url</a>
+    <button v-on:click="doSomething">doSomething</button>
+    <form v-on:submit.prevent="onSubmit">
+        <button>doSome</button>  
+    </form>   
+  </div>
+  <script src="../../../static/js/vue.js"></script>
+  <script>
+    /* eslint-disable no-new  */ // 防止eslint 检测'new' 关键字
+    /* global Vue */ // 防止eslint 检测全局变量'Vue' is not defined
+    var vm1 = new Vue({
+      el: '#vm1',
+      data: {
+        msg: 'haahaha',
+        notChangeMessage: 'heheheheh'
+      }
+    })
+    console.log(vm1)
+    var vm2 = new Vue({
+      el: '#vm2',
+      data: {
+        dynamicId: 'js-test'
+      }
+    })
+    console.log(vm2)
+    var vm3 = new Vue({
+      el: '#vm3',
+      data: {
+        isButtonDisabled: true
+      }
+    })
+    console.log(vm3)
+    var vm4 = new Vue({
+      el: '#vm4',
+      data: {
+        number: 1,
+        ok: true,
+        message: 'haha',
+        id: 12
+      }
+    })
+    var vm5 = new Vue({
+      el: '#vm5',
+      data: {
+        seen: true,
+        url: '212'
+      },
+      methods: {
+        doSomething: function () {
+          alert(this.seen)
+        },
+        onSubmit: function () {
+          alert(this.seen)
+        },
+        doSome: function () {
+          alert(this.url)
+        }
+      }
+    })
+  </script>
+</body>
+</html>

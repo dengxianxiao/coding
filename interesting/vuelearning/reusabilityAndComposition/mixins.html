@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>mixins</title>
+</head>
+<body>
+  
+  <script src="../../../static/js/vue.js"></script>
+  <script>
+    /* global Vue */
+    var myMixin = {
+      created: function () {
+        console.log('this is mixin')
+        this.hello()
+      },
+      methods: {
+        hello: function () {
+          console.log('hello my mixin')
+        },
+        conflicting: function () {
+          console.log('I\'m in mixin')
+        }
+      }
+    }
+    var Component = Vue.extend({
+      mixins: [myMixin],
+      created: function () {
+        console.log('this is component')
+      },
+      methods: {
+        conflicting: function () {
+          console.log('aaa')
+        }
+      }
+    })
+    var mixinComponent = new Component()
+    mixinComponent.conflicting()
+  </script>
+</body>
+</html>

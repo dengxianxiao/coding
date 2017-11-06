@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>condition rendering</title>
+</head>
+
+<body>
+
+  <div id="vm1" v-if="ok">
+    <h1>YES</h1>
+  </div>
+  <div v-else>
+    <h1>NO</h1>
+  </div>
+
+  <div id="vm2">
+    <template v-of="ok">
+      <h1>h1</h1>
+      <p>paragraph 1</p>
+      <p>paragraph 2</p>
+    </template>
+  </div>
+
+  <div id="vm3">
+    <template v-if="loginType === 'username'">
+      <label>Username</label>
+      <input placeholder="Enter your username" key="username-input">
+    </template>
+    <template v-else>
+      <label>Email</label>
+      <input placeholder="Enter your email address" key="email-input">
+    </template>
+    <button v-on:click="changeLoginType">changeLoginType</button>
+  </div>
+
+  <div id="vm4">
+    <p v-show="seen">
+       now you can see this paragraph
+    </p>
+  </div>
+  <script src="../../../static/js/vue.js"></script>
+  <script>
+    /* global Vue */
+    var vm1 = new Vue({
+      el: '#vm1',
+      data: {
+        ok: false
+      }
+    })
+    var vm2 = new Vue({
+      el: '#vm2',
+      data: {
+        ok: true
+      }
+    })
+    var vm3 = new Vue({
+      el: '#vm3',
+      data: {
+        loginType: 'email'
+      },
+      methods: {
+        changeLoginType: function () {
+          this.loginType === 'username'
+          ? this.loginType = 'email'
+          : this.loginType = 'username'
+        }
+      }
+    })
+    var vm4 = new Vue({
+      el: '#vm4',
+      data: {
+        seen: true
+      }
+    })
+  </script>
+</body>
+
+</html>

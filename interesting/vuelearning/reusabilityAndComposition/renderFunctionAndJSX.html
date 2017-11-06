@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>render function and JSX</title>
+</head>
+<body>
+  <h1>
+    <a href="#hello-world" name="hello-world">
+      Hello World!
+    </a>
+  </h1>
+  <div id="vm1">
+    <input v-model.number.lazy="level">
+    <anchored-heading :level="level">Hello heading</anchored-heading>
+    <anchored-heading-render :level="level">Hello heading render</anchored-heading-render>
+    <paragraph-repeat></paragraph-repeat>
+    <article style="color: rgb(228, 40, 40)">
+      haah
+    </article>
+    <ul v-if="items.length">
+      <li v-for="item in items">
+        {{ item }}
+      </li>
+    </ul>
+    <p v-else>No items found.</p>
+    <native-js-render :items="items"></native-js-render>
+    <input-render-function v-model.lazy="level"></input-render-function>
+  </div>
+  <div id="vm2">
+    <jsx-example></jsx-example>
+  </div>
+  <script src="../../../static/js/vue.js"></script>
+  <script type="text/x-template" id="anchored-heading-template">
+    <h1 v-if="level === 1">
+      <slot></slot>
+    </h1>
+    <h2 v-else-if="level === 2">
+      <slot></slot>
+    </h2>
+    <h3 v-else-if="level === 3">
+      <slot></slot>
+    </h3>
+    <h4 v-else-if="level === 4">
+      <slot></slot>
+    </h4>
+    <h5 v-else-if="level === 5">
+      <slot></slot>
+    </h5>
+    <h6 v-else-if="level === 6">
+      <slot></slot>
+    </h6>
+  </script>
+  <script>
+    /* global Vue */
+    Vue.component('anchored-heading', {
+      template: '#anchored-heading-template',
+      props: {
+        level: {
+          type: Number,
+          required: true
+        }
+      }
+    })
+    var getChildrenTextContent = function (children) {
+      return children.map(function (node) {
+        return node.children ? getChildrenTextContent(node) : node.text
+      }).join('')
+    }
+    Vue.component('anchored-heading-render', {
+      render: function (createElement) {
+        var headerId = this.getChildrenTextContent(this.$slots.default)
+          .toLowerCase()
+          .replace(/W+/g, '-')
+          .replace(/(^\-|\-$)/g, '')
+        return createElement(
+          'h' + this.level,
+          [
+            createElement('a', {
+              attrs: {
+                name: headerId,
+                href: '#' + headerId
+              }
+            }, this.$slots.default)
+          ]
+        )
+      },
+      props: {
+        level: {
+          type: Number,
+          required: true
+        }
+      },
+      methods: {
+        getChildrenTextContent: function (children) {
+          return children.map(function (node) {
+            return node.children ? getChildrenTextContent(node) : node.text
+          }).join('')
+        }
+      }
+    })
+    Vue.component('paragraph-repeat', {
+      render: function (createElement) {
+        return createElement('div',
+          Array.apply(null, { length: 5 }).map(function () {
+            return createElement('p', 'hi')
+          })
+        )
+        /* var myParagraphVNode = createElement('p', 'h1')
+        return createElement('div', [
+          myParagraphVNode,
+          myParagraphVNode
+        ]) */
+      }
+    })
+    Vue.component('native-js-render', {
+      render: function (createElement) {
+        if (this.items.length) {
+          return createElement('ul', this.items.map(function (item) {
+            return createElement('li', item)
+          }))
+        } else {
+          return createElement('p', 'No item found.')
+        }
+      },
+      props: {
+        items: {
+          type: Array
+        }
+      }
+    })
+    Vue.component('input-render-function', {
+      render: function (createElement) {
+        var self = this
+        return createElement('input', {
+          domProps: {
+            value: self.value
+          },
+          on: {
+            input: function (event) {
+              self.value = event.target.value
+              // self.$emit('input', event.target.value)
+            },
+            keyup: function (event) {
+              if (event.keyCode === 13) { // enter keyup
+                if (/\d+/.test(event.target.value)) {
+                  self.$emit('input', Number(event.target.value))
+                }
+              }
+            }
+          }
+        })
+      }
+    })
+    var vm1 = new Vue({
+      el: '#vm1',
+      data: {
+        level: 1,
+        items: [1, 2, 3, 4, 5]
+      }
+    })
+    Vue.component('jsx-example', {
+      render (h) { // <-- h must be in scope
+        // return <div id="foo">bar</div>
+      }
+    })
+    var vm2 = new Vue({
+      el: '#vm2'
+    })
+  </script>
+</body>
+</html>

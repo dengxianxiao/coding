@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>custom directive</title>
+</head>
+<body>
+  <div id="vm1">
+    <input v-focus>
+  </div>
+  <div id="vm2">
+    <span v-demo:foo.a.b="{ color: 'red', text: 'haha'}"></span>
+  </div>
+  <script src="../../../static/js/vue.js"></script>
+  <script>
+    /* global Vue */
+    Vue.directive('focus', {
+      inserted: function (el) {
+        el.focus()
+      }
+    })
+    var vm1 = new Vue({
+      el: '#vm1',
+      directives: {
+        focus: {
+          inserted: function (el) {
+            el.focus()
+          },
+          bind: function () {
+            console.log('First bind to input')
+          }
+        }
+      },
+      methods: {
+      }
+    })
+    Vue.directive('color-switch', function (el, binding) {
+      el.style.backgroundColor = binding.value
+    })
+    Vue.directive('demo', {
+      bind: function (el, binding, vnode) {
+        var s = JSON.stringify
+        console.log('binding name', s(binding.name))
+        console.log('binding value', s(binding.value))
+        console.log('binding expression', s(binding.expression))
+        console.log('binding argument', s(binding.arg))
+        console.log('binding modifiers', s(binding.modifiers))
+        console.log('binding vnode keys', Object.keys(vnode).join(', '))
+      }
+    })
+    var vm2 = new Vue({
+      el: '#vm2',
+      data: {
+        message: 'hello'
+      }
+    })
+  </script>
+</body>
+</html>

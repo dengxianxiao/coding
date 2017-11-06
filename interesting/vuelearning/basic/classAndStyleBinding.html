@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>class and style binding</title>
+</head>
+<body>
+  <div id="vm1" v-bind:class="{active: isActive}">
+    <p v-bind:class="classObject"></p>
+    <p v-bind:class="classObjectByComputed"></p>
+    <p v-bind:class="[activeClass, errorClass]"></p>
+    <p v-bind:class="[{active: isActive}, errorClass]"></p>
+
+    <p v-bind:style="{ color: activeColor, fontSize:fontSize + 'px' }">afsdf</p>
+    <p v-bind:style="styleObject">sfdsdfsdf</p>
+    <p v-bind:style="[baseStyle, overridingStyle]">11111</p>
+    <p v-bind:style="{ display: ['-webkit-box', '-ms-flexbox', 'flex'] }">123</p>
+  </div>
+  <script src="../../../static/js/vue.js"></script>
+  <script>
+    /* global Vue */ // 防止eslint 检测全局变量'Vue' is not defined
+    var vm1 = new Vue({
+      el: '#vm1',
+      data: {
+        isActive: true,
+        error: null,
+        activeClass: 'active',
+        errorClass: 'text-danger',
+        activeColor: 'red',
+        fontSize: 18,
+        baseStyle: {
+          fontSize: '30px'
+        },
+        overridingStyle: {
+          fontSize: '50px'
+        },
+        styleObject: {
+          color: 'blue',
+          fontSize: '25px'
+        },
+        classObject: {
+          active: true,
+          'text-danger': true
+        }
+      },
+      computed: {
+        classObjectByComputed: function () {
+          return {
+            active: this.isActive && !this.error,
+            'text-danger': this.error && this.error.type === 'fatal'
+          }
+        }
+      }
+    })
+  </script>
+</body>
+</html>

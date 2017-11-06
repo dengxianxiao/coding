@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>event handling</title>
+</head>
+<body>
+  <div id="vm1">
+    <button @click="counter += 1">add 1</button>
+    <p>点击 {{ counter }} 次</p>
+  </div>
+  <div id="vm2">
+    <button @click="greet">greet</button>
+  </div>
+  <div id="vm3">
+    <button @click="say('hi')">say(hi)</button>
+    <button @click="say('hello')">say(hello)</button>
+    <button @click="warn('Form cannot be submit', $event)">submit</button>
+  </div>
+  <script src="../../../static/js/vue.js"></script>
+  <script>
+    /* global Vue */
+    var vm1 = new Vue({
+      el: '#vm1',
+      data: {
+        counter: 0
+      }
+    })
+    var vm2 = new Vue({
+      el: '#vm2',
+      data: {
+        name: 'vue.js'
+      },
+      methods: {
+        greet: function (event) {
+          alert('Hello ' + this.name + '!')
+          if (event) {
+            console.log(event)
+            alert(event.target.tagName)
+          }
+        }
+      }
+    })
+    var vm3 = new Vue({
+      el: '#vm3',
+      methods: {
+        say: function (message) {
+          alert(message)
+        },
+        warn: function (message, event) {
+          if (event) {
+            event.preventDefault()
+          }
+          alert(message)
+        }
+      }
+    })
+  </script>
+</body>
+</html>

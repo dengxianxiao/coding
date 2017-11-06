@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>componnet</title>
+</head>
+<body>
+  <div id="vm1">
+    <my-component></my-component>
+    <my-child-component></my-child-component>
+  </div>
+  <div id="vm2">
+    <simple-counter></simple-counter>
+    <simple-counter></simple-counter>
+    <simple-counter></simple-counter>
+  </div>
+  <div id="vm3">
+    <input v-model="dynamicMessage">
+    <br>
+    <child message="hahahaha" my-message="heheh" :dynamic-message="dynamicMessage" :todo="todo"></child>
+  </div>
+  <div id="vm4">
+    <label for="propA">propA(Number)</label>
+    <input type="text" id="propA" v-model.Number="propA">
+    <label for="propB">propB(String, Number)</label>
+    <input type="text" id="propB" v-model="propB">
+    <label for="propC">propC(String required)</label>
+    <input type="text" id="propC" v-model="propC">
+    <label for="propD">propD(Number default)</label>
+    <input type="text" id="propD" v-model="propD">
+    <label for="propE">propE(Object default)</label>
+    <input type="text" id="propE" v-model="propE">
+    <label for="propF">propF(validator value > 10)</label>
+    <input type="text" id="propF" v-model.Number="propF">
+    <prop-validate :prop-a="propA" :prop-b="propB" :prop-c="propC" :prop-d="propD" :prop-e="propE" :prop-f="propF"></prop-validate>
+  </div>
+  <div id="vm5">
+    <p>{{ total }}</p>
+    <button-counter v-on:increment="incrementTotal"></button-counter>
+    <button-counter v-on:increment="incrementTotal"></button-counter>
+    <button-counter v-on:click.native="doSomething"></button-counter>
+  </div>
+  <div id="vm6">
+    <label for="syncData">syncData parent</label><input type="text" id="syncData" v-model="syncData">
+    <comp-sync :parent-prop.sync="syncData"></comp-sync>
+  </div>
+  <div id="vm7">
+    <my-checkbox v-model="haa" value="sfsdfsdf"></my-checkbox>
+  </div>
+  <div id="vm8">
+    <comp-a></comp-a>
+    <comp-b></comp-b>
+  </div>
+  <div id="vm9">
+    <parent-component></parent-component>
+    <my-awesome-list :items="items">
+        <template slot="item" scope="{ text }"><!-- es6解构赋值 -->
+          <li class="my-fancy-item">{{ text }}</li>
+        </template>
+      </my-awesome-list>    
+  </div>
+  <div id="vm10">
+    <keep-alive>
+      <component :is="currentView"></component>
+    </keep-alive>
+    <button @click="changeComponent">change</button>
+  </div>
+  <script src="../../../static/js/vue.js"></script>
+  <script>
+    /* global Vue */
+    Vue.component('my-component', {
+      template: '<div>A custom component! {{ message }}</div>',
+      data: function () {
+        return {
+          message: 'Hello'
+        }
+      }
+    })
+    var childComponent = {
+      template: '<div>A custom child component!</div>'
+    }
+    var vm1 = new Vue({
+      el: '#vm1',
+      components: {
+        'my-child-component': childComponent
+      }
+    })
+    var data = {
+      counter: 1
+    }
+    Vue.component('simple-counter', {
+      template: '<button v-on:click="counter += 1">{{ counter }}</button>',
+      data: function () {
+        return {
+          counter: 0
+        }
+      }
+    })
+    var vm2 = new Vue({
+      el: '#vm2'
+    })
+    Vue.component('child', {
+      props: ['message', 'myMessage', 'dynamicMessage', 'todo', 'initialCounter'],
+      template: '\
+        <span>\
+          props from father is : {{ message }} - {{ myMessage }}\
+          <div>dynamic message is : {{ dynamicMessage }}</div>\
+          <div> {{ todo }}</div>\
+        </span>\
+      ',
+      data: function () {
+        return {
+          counter: this.initialCounter
+        }
+      },
+      computed: {
+        normalizedSize: function () {
+          return this.message.trim.toLowerCase()
+        }
+      }
+    })
+    var vm3 = new Vue({
+      el: '#vm3',
+      data: {
+        dynamicMessage: '',
+        todo: {
+          aa: 'aa',
+          bb: 'bb'
+        }
+      }
+    })
+    Vue.component('prop-validate', {
+      props: {
+        propA: Number,
+        propB: [String, Number],
+        propC: {
+          type: String,
+          required: true
+        },
+        propD: {
+          type: Number,
+          default: 100
+        },
+        propE: {
+          type: Object,
+          default: function () {
+            return { message: 'Hello' }
+          }
+        },
+        propF: {
+          validator: function (value) {
+            return value > 1
+          }
+        }
+      },
+      template: '\
+        <div>\
+          <p>propA is: {{ propA }}</p>\
+          <p>propB is: {{ propB }}</p>\
+          <p>propC is: {{ propC }}</p>\
+          <p>propD is: {{ propD }}</p>\
+          <p>propE is: {{ propE }}</p>\
+          <p>propF is: {{ propF }}</p>\
+        </div>\
+      '
+    })
+    var vm4 = new Vue({
+      el: '#vm4',
+      data: {
+        propA: 12,
+        propB: '',
+        propC: '',
+        propD: 12,
+        propE: {
+          message: 'hehe'
+        },
+        propF: 19
+      }
+    })
+    Vue.component('button-counter', {
+      template: '<button v-on:click="incrementConter">{{ counter }}</button>',
+      data: function () {
+        return {
+          counter: 0
+        }
+      },
+      methods: {
+        incrementConter: function () {
+          this.counter += 1
+          this.$emit('increment')
+        }
+      }
+    })
+    var vm5 = new Vue({
+      el: '#vm5',
+      data: {
+        total: 0
+      },
+      methods: {
+        incrementTotal: function () {
+          this.total += 1
+        },
+        doSomething: function (event) {
+          console.log(event)
+        }
+      }
+    })
+    Vue.component('comp-sync', {
+      template: '\
+        <div>\
+        <p>parentProp is: {{ parentProp }}</p>\
+          <label for="childData">childData </label>\
+          <input v-model="childData" id="childData" @keyup.enter="updateParentProp">\
+        </div>\
+      ',
+      props: {
+        parentProp: {
+          type: String,
+          required: true
+        }
+      },
+      data: function () {
+        return {
+          childData: ''
+        }
+      },
+      methods: {
+        updateParentProp: function () {
+          // 子组件改变父组件传入的值
+          // this.parentProp = this.childData
+          this.$emit('update:parentProp', this.childData)
+          console.log(this.parentProp)
+        }       
+      }
+    })
+    var vm6 = new Vue({
+      el: '#vm6',
+      data: {
+        syncData: ''
+      }
+    })
+    Vue.component('my-checkbox', {
+      template: '<input type="checkbox"></input>',
+      model: {
+        prop: 'checked',
+        event: 'change'
+      },
+      props: {
+        checked: Boolean,
+        value: String
+      }
+    })
+    var vm7 = new Vue({
+      el: '#vm7',
+      data: {
+        haa: true
+      }
+    })
+    var bus = new Vue()
+    Vue.component('comp-a', {
+      template: '<input @change="changeValue" v-model="inputValue"></input>',
+      data: function () {
+        return {
+          inputValue: ''
+        }
+      },
+      mounted: function () {
+        bus.$on('changeInputValueB', value => this.inputValue = value)
+      },
+      methods: {
+        changeValue: function () {
+          bus.$emit('changeInputValueA', this.inputValue)
+          console.log(this.inputValue)
+        }
+      }
+    })
+    Vue.component('comp-b', {
+      template: '<p>value from component a is : {{ valueFromComponentA }}\
+        <br>change component a value <input v-model="inputValue" @change="changeComponentA"></input>\
+        </p>',
+      data: function () {
+        return {
+          valueFromComponentA: '1231',
+          inputValue: ''
+        }
+      },
+      mounted: function () {
+        bus.$on('changeInputValueA', function (value) {
+          console.log(value)
+          this.valueFromComponentA = value
+        }.bind(this)) // 绑定this到bus组件实例上，才能改变该组件的数据，也可以使用箭头函数
+      },
+      methods: {
+        changeComponentA: function () {
+          bus.$emit('changeInputValueB', this.inputValue)
+        }
+      }
+    })
+    var vm8 = new Vue({
+      el: '#vm8'
+    })
+    Vue.component('child-component', {
+      template: '\
+        <div>\
+          <h1>我是子组件标题</h1>\
+          <slot name="main">\
+            父组件没有内容传入时才会显示\
+          </slot>\
+          <slot name="parent-slot">\
+          </slot>\
+          <slot text="hello from child"></slot>\
+        </div>\
+      '
+    })
+    Vue.component('parent-component', {
+      template: '\
+        <div>\
+          <h1>我是父组件标题</h1>\
+          <child-component>\
+            <h2 slot="parent-slot">something different</h2>\
+            <template scope="props">\
+              <p>hello from parent</p>\
+              <p>{{ props.text }}</p>\
+            </template>\
+          </child-component>\
+        </div>\
+      ',
+      data: function () {
+        return {
+          aaa: ''
+        }
+      }
+    })
+    Vue.component('my-awesome-list', {
+      template: `
+        <ul>
+          <slot name="item" v-for="item in items" :text="item.text"></slot>
+        </ul>
+      `,
+      props: {
+        items: {
+          type: Array,
+          required: true
+        }
+      }
+    })
+    var vm9 = new Vue({
+      el: '#vm9',
+      data: {
+        items: [
+          { text: 'haha' },
+          { text: 'hehe' },
+          { text: 'eeee' }
+        ]
+      }
+    })
+    var Article1 = {
+      template: '<h2>component 1 </h2>'
+    }
+    var Article2 = {
+      template: '<h2>component 2</h2>'
+    }
+    var vm10 = new Vue({
+      el: '#vm10',
+      data: {
+        currentView: 'article1'
+      },
+      components: {
+        Article1,
+        Article2
+      },
+      methods: {
+        changeComponent: function () {
+          this.currentView === 'article1' ? this.currentView = 'article2' : this.currentView = 'article1'
+        }
+      }
+    })
+  </script>
+</body>
+</html>

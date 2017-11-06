@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>enter leave and list transition</title>
+  <link href="https://cdn.jsdelivr.net/npm/animate.css@3.5.1" rel="stylesheet" type="text/css">
+  <style>
+    .fade-enter-active, .fade-leave-active {
+      transition: opacity 0.5s;
+    }
+    .fade-enter, .fade-leave-to {
+      opacity: 0;
+    }
+    .slice-fade-enter-active {
+      transition: all .3s ease;
+    }
+    .slice-fade-leave-active {
+      transition: all .8s cubic-bezier(0.075, 0.82, 0.165, 1);
+    }
+    .slice-fade-enter, .slice-fade-leave-to {
+      transform: translateX(10px);
+      opacity: 0;
+    }
+    .bounce-enter-active {
+      animation: bounce-in .5s;
+    } 
+    .bounce-leave-active {
+      animation: bounce-in .5s reverse;
+    }
+    @keyframes bounce-in {
+      0% {
+        transform: scale(0)
+      }
+      50% {
+        transform: scale(1.5);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+    .component-fade-enter-active, .component-fade-leave-active {
+      transition: all .3s ease;
+    }
+    .component-fade-enter, .component-fade-leave-to {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    .mode-fade-enter-active, .mode-fade-leave-active {
+      transition: all .5s ease;
+    }
+    .mode-fade-enter, .mode-fade-leave-to {
+      opacity: 0;
+      transform: translateX(10px);
+    }
+    .list-item {
+      display: inline-block;
+      margin-right: 10px;
+      transition: all 1s;
+    }   
+    .list-enter, .list-leave-to {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    .list-leave-active {
+      position: absolute;
+    }
+  </style>
+</head>
+<body>
+  <div id="vm1">
+    <button v-on:click="show = !show">Toggle</button>
+    <transition name="fade">
+      <p v-if="show">hello</p>
+    </transition>
+    <transition name="slice-fade">
+      <p v-if="show">heheheihei</p>
+    </transition>
+    <transition name="bounce">
+      <p v-if="show">bounce out/in</p>
+    </transition>
+    <transition
+      name="custom-classes-transition"
+      enter-active-class="animated tada"
+      leave-active-class="animated bounceOutRight"
+    >
+      <p v-if="show">custom class transition</p>
+    </transition>
+    <transition
+      @before-enter="beforeEnter"
+      @enter="enter"
+      @leave="leave"
+      :css="false"
+    >
+      <p v-if="show">velocity demo</p>
+    </transition>
+    <transition-group>
+      <input key="input" v-model="docStateInput" @keyup.enter="changeDocState">
+      <button :key="docState">
+        {{ buttonMessage }}
+      </button>
+    </transition-group>
+  </div>
+  <div id="vm2">
+    <input type="radio" value="v-a" id="compA" name="view" v-model="view">
+    <label for="compA">comp a</label>
+    <input type="radio" value="v-b" id="compB" name="view" v-model="view">
+    <label for="compB">comp b</label>
+    <transition name="component-fade" mode="in-out">
+      <component :is="view"></component>
+    </transition>
+    <transition-group>
+      
+    </transition-group>
+  </div>
+  <div id="vm3">
+    <button @click="add">Add</button>
+    <button @click="remove">Remove</button>
+    <button @click="shuffle">Shuffle</button>
+    <transition-group name="list" tag="p">
+      <span v-for="item in items" :key="item" class="list-item">
+        {{ item }}
+      </span>
+    </transition-group>
+  </div>
+  <script src="../../../static/js/vue.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.2.3/velocity.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.14.1/lodash.min.js"></script>
+  <script>
+    /* global Vue Velocity _ */
+    var vm1 = new Vue({
+      el: '#vm1',
+      data: {
+        show: true,
+        docStateInput: '',
+        docState: 'edited',
+        docStates: ['edited', 'saved', 'editing']
+      },
+      computed: {
+        buttonMessage: function () {
+          switch (this.docState) {
+            case 'edited': return 'Edit'
+            case 'saved': return 'Save'
+            case 'editing': return 'Editing'
+            default: break
+          }
+        }
+      },
+      methods: {
+        changeDocState: function () {
+          this.docState = this.docStateInput
+        },
+        beforeEnter: function (el) {
+          el.style.opacity = 0
+          el.style.transformOrigin = 'left'
+        },
+        enter: function (el, done) {
+          Velocity(el, { opacity: 1, fontSize: '1.4em' }, { duration: 400 })
+          Velocity(el, { fontSize: '1em' }, { complete: done })
+        },
+        leave: function (el, done) {
+          Velocity(el, { translateX: '15px', rotateX: '50deg' }, { duration: 600 })
+          Velocity(el, { el, rotateZ: '100deg' }, { loop: 2 })
+          Velocity(el, { rotateX: '45deg', translateY: '30px', translateX: '30px', opacity: 0 }, { complete: done })
+        }
+      }
+    })
+    var vm2 = new Vue({
+      el: '#vm2',
+      data: {
+        view: 'v-a'
+      },
+      methods: {
+      },
+      components: {
+        'v-a': {
+          template: '<div> component a</div>'
+        },
+        'v-b': {
+          template: '<div> component b</div>'
+        }
+      }
+    })
+    var mv3 = new Vue({
+      el: '#vm3',
+      data: {
+        items: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+        nextNum: 10
+      },
+      methods: {
+        randomIndex: function () {
+          return Math.floor(Math.random() * this.items.length)
+        },
+        add: function () {
+          this.items.splice(this.randomIndex(), 0, this.nextNum++)
+        },
+        remove: function () {
+          this.items.splice(this.randomIndex(), 1)
+        },
+        shuffle: function () {
+          this.items = _.shuffle(this.items)
+        }
+      }
+    })
+  </script>
+</body>
+</html>
