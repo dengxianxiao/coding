@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="../../../../static/js/vue.js"></script>
+  <script src="../../../../static/js/vue-router.js"></script>
+  <title>programmatic navigation</title>
+</head>
+
+<body>
+  <div id="vm1">
+    <h1>Hello vue-router</h1>
+    <p>
+      <router-link to="/user/foo">Go to foo default</router-link>
+      <button @click="goToDefault">goToDefault</button>
+      <button @click="goToFooProfile">goToFooProfile</button>
+      <button @click="goToFooPosts">goToFooPosts</button>
+      <router-link to="/user/foo/profile">Go to foo profile</router-link>
+      <router-link to="/user/bar/posts">Go to bar posts</router-link>
+      <router-view></router-view>
+    </p>
+    <div>
+      ------------------------------
+    </div>
+    <p>
+      <router-link to="/multiple">multiple</router-link>
+      <router-view></router-view>
+      <router-view name="a"></router-view>
+      <router-view name="b"></router-view>
+    </p>
+  </div>
+  <script>
+    const User = {
+      props: ['id'],
+      template: `
+        <div>
+          <h2>User {{ id }}</h2>
+          <router-view></router-view>
+        </div>
+      `,
+      watch: {
+        '$route'(to, from) {
+        }
+      },
+      beforeRouteUpdate(to, from, next) {
+        console.log(to.params.id)
+        console.log(from.params.id)
+        next()
+      }
+    }
+    const UserProfile = {
+      template: '<div> profile </div>'
+    }
+    const UserPosts = {
+      template: '<div> posts </div>'
+    }
+    const DefaultComponent = {
+      template: '<div> default </div>'
+    }
+    const routes = [
+      {
+        path: '/user/:id',
+        name: 'user',
+        props: true,
+        component: User,
+        children: [
+          /* {
+            path: '',
+            component: DefaultComponent
+          }, */
+          {
+            path: 'profile',
+            component: UserProfile
+          },
+          {
+            path: 'posts',
+            component: UserPosts
+          }
+        ]
+      },
+      {
+        path: '/multiple',
+        redirect: '/user/foo',
+        components: {
+          default: User,
+          a: UserProfile,
+          b: UserPosts
+        }
+      }
+    ]
+    const router = new VueRouter({
+      routes
+    })
+    new Vue({
+      el: '#vm1',
+      router,
+      methods: {
+        goToFooProfile: function () {
+          this.$router.push('/user/foo/profile')
+        },
+        goToDefault: function () {
+          this.$router.push({ path: '/user/foo' })
+        },
+        goToFooPosts: function () {
+          const id = 'foo'
+          this.$router.push({ path: `/user/${id}/posts`})
+        }
+      }
+    })
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="../../../../static/js/vue.js"></script>
+  <script src="../../../../static/js/vue-router.js"></script>
+  <title>getting started</title>
+</head>
+<body>
+  <div id="vm1">
+    <h1>Hello vue-router</h1>
+    <p>
+      <router-link to="/foo">Go to foo</router-link>
+      <router-link to="/bar">Go to bar</router-link>
+    </p>
+    <router-view></router-view>
+  </div>
+  <script>
+    const Foo = { template: '<div>Hello foo template</div>' }
+    const Bar = { template: '<div>Hello bar template</div>' }
+    const routes = [
+      { path: '/foo', component: Foo },
+      { path: '/bar', component: Bar }
+    ]
+    const router = new VueRouter({
+      routes
+    })
+    new Vue({
+      el: '#vm1',
+      router
+    })
+  </script>
+</body>
+</html>
