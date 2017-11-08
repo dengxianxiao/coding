@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="../../../../static/js/vue.js"></script>
+  <script src="../../../../static/js/vue-router.js"></script>
+  <title>navigation guards</title>
+  <style>
+    .slide-enter-active, .silde-leave-active {
+      transition: all 1s;
+    }
+    .slide-enter, .slide-leave-to {
+      opacity: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="vm1">
+    <h1>Hello vue-router</h1>
+    <p>
+      <router-link to="/foo">Go to foo</router-link>
+      <router-link to="/foo/hello">Go to foo hello</router-link>
+      <router-link to="/bar">Go to bar</router-link>
+    </p>
+    <transition name="slide">
+      <router-view></router-view>
+    </transition>
+  </div>
+  <script>
+    const Foo = { 
+      template: '<div>Hello foo template</div>',
+      beforeRouteEnter: (to, from, next) => {
+        // ...
+        next(vm => {
+          // do something
+        })
+      },
+      beforeRouteUpdate: (to, from, next) => {
+        // ...
+        next()
+      },
+      beforeRouteLeave: (to, from, next) => {
+        // ...
+        next()
+      }
+    }
+    const Bar = { template: '<div>Hello bar template</div>' }
+    const Hello = { template: '<div>Hello template</div>' }
+    const Login = { template: '<div>Login template</div>' }
+    const routes = [
+      { 
+        path: '/foo',
+        component: Foo,
+        children: [
+          {
+            path: 'hello',
+            component: Hello,
+            meta: {
+              requiresAuth: true
+            }
+          }
+        ],
+        beforeEnter: (to, from, next) => {
+          // do something
+          next()
+        }
+      },
+      { path: '/bar', component: Bar },
+      { path: '/login', component: Login }
+    ]
+    const router = new VueRouter({
+      routes
+    })
+    router.beforeEach((to, from, next) => {
+      if (to.matched.some(record => record.meta.requiresAuth)) {
+        // this route requires auth, check if logged in
+        // if not, redirect to login page.
+        console.log(to)
+        next({
+          path: '/login',
+          query: {
+            redirect: to.fullPath
+          }
+        }) 
+      } else {
+        next()
+      }
+    })  
+    router.afterEach((to, from) => {
+      // ...
+    })
+    new Vue({
+      el: '#vm1',
+      router
+    })
+  </script>
+</body>
+
+</html>
