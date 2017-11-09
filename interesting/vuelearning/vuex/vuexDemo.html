@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="../../../static/js/vue.js"></script>
+  <script src="../../../static/js/vuex.js"></script>
+  <title>vuex demo</title>
+</head>
+<body>
+  
+  <div id="app"></div>
+  <script>
+    /* global mapGetters */
+    Vue.use(Vuex)
+    const store = new Vuex.Store({
+      state: {
+        count: 0,
+        todos: [
+          { id: 1, text: 'haha', done: true },
+          { id: 2, text: 'hehe', done: false }
+        ]
+      },
+      getters: {
+        doneTodos: state => {
+          return state.todos.filter(todo => todo.done)
+        },
+        doneTodosCount: (state, getters) => {
+          return getters.doneTodos.length
+        },
+        getTodoById: (state, getters) => (id) => {
+          return state.todos.find(todo => todo.id === id)
+        }
+      },
+      mutations: {
+        increment (state) {
+          state.count++
+        }
+      }
+    })
+    const Counter = {
+      template: `
+        <div>
+          <div>{{ doneTodosCount }}</div>
+          <div> {{ doneTodos }}</div>
+          <div> {{ getTodoById }}</div>
+          <div>{{ todos }}</div>
+          <div> {{ todosCount }}</div>
+          <div> {{ getId }}</div>
+        </div>
+      `,
+      created: function () {
+        console.log(this.$store.getters.doneTodos)
+      },
+      computed: {       
+        /* count: function () {
+          return this.$store.state.count
+        },
+        todos: function () {
+          return this.$store.getters.doneTodos
+        },
+        getTodoById: function () {
+          return this.$store.getters.getTodoById(2)
+        } */
+        // 展开运算符
+        ...Vuex.mapGetters({
+          todos: 'doneTodos',
+          todosCount: 'doneTodosCount',
+          getId: 'getTodoById'
+        }),
+        ...Vuex.mapGetters([
+          'doneTodos', 
+          'doneTodosCount', 
+          'getTodoById' 
+        ])
+      }
+    }
+    const app = new Vue({
+      el: '#app',
+      store,
+      components: { Counter },
+      template: `
+        <div class="app">
+          <counter></counter>
+          <button @click="incrementCounter">add</button>
+        </div>
+      `,
+      methods: {
+        incrementCounter: function () {
+          store.commit('increment')
+        }
+      }
+    })
+  </script>
+</body>
+</html>
