@@ -12,8 +12,9 @@
   
   <div id="app"></div>
   <script>
-    /* global mapGetters */
+    
     Vue.use(Vuex)
+    const DECREMENT_COUNT = 'DECREMENT_COUNT'
     const store = new Vuex.Store({
       state: {
         count: 0,
@@ -34,8 +35,66 @@
         }
       },
       mutations: {
-        increment (state) {
-          state.count++
+        increment (state, obj) {
+          state.count += obj.amount
+        },
+        [DECREMENT_COUNT] (state, payload) {
+          state.count -= payload.amount
+        },
+        gotData (state) {
+          state.count += 10
+        },
+        gotOtherData (state) {
+          state.count += 20
+        }
+      },
+      actions: {
+        increment (context, payload) {
+          setTimeout(() => {
+            console.log(context, payload)
+            context.commit('increment', payload)
+          }, 1000);
+        },
+        incrementByAction ({ commit }, payload) {
+          setTimeout(() => {
+            console.log(payload)
+            commit('increment', payload)
+          }, 1000);
+        },
+        actionA ({ commit }, payload) {
+          return new Promise((resolve, reject) => {
+            setTimeout(() => {
+              commit('increment', payload)
+              resolve()
+            }, 1000);
+          })
+        },
+        actionB ({ dispatch, commit }, payload) {
+          dispatch('actionA', payload).then(() => {
+            commit('DECREMENT_COUNT', payload)
+          })
+        },
+        getData ({ commit }, payload) {
+          return new Promise((resolve, reject) => {
+            setTimeout(() => { 
+              commit('increment', payload) 
+              resolve() 
+            }, 1000);
+          }) 
+        },
+        getOtherData ({ commit }, payload) { 
+          return new Promise((resolve, reject) => { 
+            setTimeout(() => { commit('increment', payload)
+            resolve() }, 1000); 
+          }) 
+        },
+        async actionC (context) {
+          console.log(context)
+          context.commit('gotData', await getData())
+        },
+        async actionD ({ dispatch, commit }, payload) {
+          await dispatch('actionC')
+          commit('gotOtherData', await getOtherData())
         }
       }
     })
@@ -47,16 +106,21 @@
           <div> {{ getTodoById }}</div>
           <div>{{ todos }}</div>
           <div> {{ todosCount }}</div>
-          <div> {{ getId }}</div>
+          <div>store.todos[2] is: {{ textDemo.text }}</div>
+          <div> store.count is: {{ count }} </div>
         </div>
       `,
       created: function () {
         console.log(this.$store.getters.doneTodos)
       },
       computed: {       
-        /* count: function () {
+        count: function () {
           return this.$store.state.count
         },
+        textDemo: function () {
+          return this.getId(2)
+        },
+        /*
         todos: function () {
           return this.$store.getters.doneTodos
         },
@@ -84,12 +148,62 @@
         <div class="app">
           <counter></counter>
           <button @click="incrementCounter">add</button>
+          <button @click="incrementAsync">addAsync</button>
+          <button @click="actionPromise">addPromise</button>
+          <button @click="asyncAwait">asyncAwait</button>
         </div>
       `,
       methods: {
+        asyncAwait: function () {
+          store.dispatch('actionC', { amount: 100 }).then(() => {
+            // ...
+          })
+        },
+        actionPromise: function () {
+          store.dispatch('actionA', { amount: 100 }).then((res) => {
+            console.log(res)
+          })
+          store.dispatch('actionB', { amount: 5 })
+        },
+        incrementAsync: function () {
+          store.dispatch('incrementByAction', {
+            amount: 100
+          })
+        },
         incrementCounter: function () {
-          store.commit('increment')
-        }
+          store.commit('increment', {
+            amount: 100
+          })
+          this.add({
+            amount: 100
+          })
+          this.increment({
+            amount: 100
+          })
+          this.DECREMENT_COUNT({
+            amount: 5
+          })
+          store.commit({
+            type: 'increment',
+            amount: 5
+          })
+          store.commit({
+            type: 'DECREMENT_COUNT',
+            amount: 20
+          })
+        },
+        ...Vuex.mapMutations([
+          'increment', // this.$store.commit('increment')
+          'DECREMENT_COUNT'
+        ]),
+        ...Vuex.mapMutations({
+          add: 'increment', // this.add() => this.$store.commit('increment', amount)
+          reduce: 'DECREMENT_COUNT'
+        }),
+        ...Vuex.mapActions({
+          add: 'increment',
+          addAsync: 'incrementByAction'
+        })
       }
     })
   </script>
