@@ -2,10 +2,13 @@ const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
 const webpack = require('webpack')
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
+
+const hotMiddlewareScript = 'webpack-hot-middleware/client?noInfo=true&reload=true'
 
 module.exports = {
   entry: {
-    app: './src/index.js'
+    app: ['./src/index.js', hotMiddlewareScript]
   },
   devtool: 'inline-source-map',
   devServer: {
@@ -17,8 +20,10 @@ module.exports = {
     new HtmlWebpackPlugin({
       title: 'Output management'
     }),
-    new webpack.NamedModulesPlugin(),
-    new webpack.HotModuleReplacementPlugin()
+    new webpack.optimize.OccurrenceOrderPlugin(),
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.NoEmitOnErrorsPlugin(),
+    new UglifyJSPlugin()
   ],
   module: {
      rules: [
