@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>storage</title>
+</head>
+<body>
+  <form>
+    <div class="form-control">
+      <label for="username">localStorage username</label>
+      <input type="text" id="username">
+    </div>
+    <div class="form-control">
+      <label for="age">localStorage age</label>
+      <input type="text" id="age">
+    </div>
+    <div class="form-control">
+      <label for="birthday">localStorage birthday</label>
+      <input type="text" id="birthday">
+    </div>
+    <div class="form-control">
+      <label for="hobby">sessionStorage hobby</label>
+      <input type="text" id="hobby">
+    </div>
+  </form>
+
+  <button id="removeUsername">removeUsername</button>
+  <button id="removeAll">removeAll</button>
+  <script>
+    // 触发storage改变的页面不会触发storage事件，同域下的其他页面才会触发该事件
+    window.addEventListener('storage', function(e) {
+      console.log(e)
+    })
+
+    // localStorage
+    function changeLocalStorage() {
+      localStorage.setItem('username', document.getElementById('username').value)
+      localStorage.setItem('age', document.getElementById('age').value)
+      localStorage.setItem('birthday', document.getElementById('birthday').value)
+
+      getLoclStorage()
+    }
+
+    function getLoclStorage() {
+      var username = localStorage.getItem('username')
+      var age = localStorage.getItem('age')
+      var birthday = localStorage.getItem('birthday')
+
+      document.getElementById('username').value = username
+      document.getElementById('age').value = age
+      document.getElementById('birthday').value = birthday
+
+      console.log(`localStorage username = ${username}, age = ${age}, birthday = ${birthday}`)
+    }
+
+    document.getElementById('username').onchange = changeLocalStorage
+    document.getElementById('age').onchange = changeLocalStorage
+    document.getElementById('birthday').onchange = changeLocalStorage
+
+    if (!localStorage.getItem('username')) {
+      changeLocalStorage()
+    } else {
+      getLoclStorage()
+    }
+
+
+    // sessionStorage
+    function changeSessionStorage() {
+      sessionStorage.setItem('hobby', document.getElementById('hobby').value)
+      getSessionStorage()
+    }
+
+    function getSessionStorage() {
+      var hobby = sessionStorage.getItem('hobby')
+      document.getElementById('hobby').value = hobby
+      console.log(`sessionStorage hobby = ${hobby}`)
+    }
+
+    document.getElementById('hobby').onchange = changeSessionStorage
+    if (!sessionStorage.getItem('hobby')) {
+      changeSessionStorage()
+    } else {
+      getSessionStorage()
+    }
+
+    // 删除
+    document.getElementById('removeUsername').addEventListener('click', function() {
+      localStorage.removeItem('username')
+    })
+    document.getElementById('removeAll').addEventListener('click', function() {
+      localStorage.clear()
+      sessionStorage.clear()
+    })
+  </script>
+</body>
+</html>

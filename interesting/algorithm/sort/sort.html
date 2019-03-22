@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>sort</title>
+</head>
+<body>
+  <script>   
+    var arr = [1, 3, 9, 8, 2]
+
+    function swapArr(i, j, arr) {
+      var temp = arr[i]
+      arr[i] = arr[j]
+      arr[j] = temp
+    }
+
+    // 冒泡排序O(n^2)
+    var bubbleSort = function(arr) {
+      for (var i = 0; i < arr.length; i++) {
+        for (var j = 0; j < arr.length - i; j++) {
+          if (arr[j] > arr[j + 1]) {
+            swapArr(j, j + 1, arr)
+          }
+        }
+      }
+      return arr
+    }
+    // console.log(bubbleSort(arr))
+
+    // 双向冒泡排序
+    var bothwayBubbleSort = function(arr) {
+      var len = arr.length
+      for (var i = 0; i < len; len--) { // len减,每轮最后一个都是最大的
+        // 将最小的放前面
+        for (var j = len; j > i; j--) {
+          if (arr[j] < arr[j - 1]) {
+            swapArr(j, j - 1, arr)
+          }
+        }
+        i++ // 第一个已经是最小的
+        // 将最大的放后面
+        for (var j = i; j < len; j++) {
+          if (arr[j] > arr[j + 1]) {
+            swapArr(j, j + 1, arr)
+          }
+        }
+      }
+      return arr
+    }
+    // console.log(bothwayBubbleSort(arr))
+
+    // 选择排序O(n^2)
+    var selectSort = function(arr) {
+      len = arr.length
+      for (var i = 0; i < len; i++) {
+        var min = arr[i]
+        for (j = i + 1; j < len; j++) {
+          if (arr[j] < min) {
+            swapArr(i, j, arr)
+          }
+        }
+      }
+      return arr
+    }
+    // console.log(selectSort(arr))
+
+
+    // 快速排序
+    var quickSort = function(arr) {
+      if (arr.length === 0) {
+        return []
+      }
+      var result = []
+      var centerIndex = Math.floor(arr.length / 2)
+      var centerValue = arr.splice(centerIndex, 1)
+      var leftArr = []
+      var rightArr = []
+      for (var i = 0; i < arr.length; i++) {
+        if (arr[i] > centerValue) {
+          rightArr.push(arr[i])
+        } else {
+          leftArr.push(arr[i])
+        }
+      }
+      return quickSort(leftArr).concat(centerValue, quickSort(rightArr))
+    }
+    // console.log(quickSort(arr))
+
+    function quickSort2(arr, low, hight) {
+      var patitionIndex
+      var left = low || 0
+      var right = hight || arr.length - 1
+      if (left < right) {
+        patitionIndex = patition(arr, left, right)
+        quickSort2(arr, left, patitionIndex - 1)
+        quickSort2(arr, patitionIndex + 1, right)
+      }
+      return arr
+    }
+
+    function patition(arr, left, right) {
+      for (var i = left + 1, j = left; i <= right; i++) {
+        arr[i] < arr[left] && swapArr(i, ++j, arr)
+      }
+      swapArr(left, j, arr)
+      return j
+    }
+    console.log(quickSort2(arr))
+  </script>
+</body>
+</html>

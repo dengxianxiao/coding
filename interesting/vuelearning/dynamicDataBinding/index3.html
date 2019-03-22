@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Dynamic Data Binding 3</title>
+</head>
+<body>
+  
+  <script>
+    // 观察者对象
+   function Observer(data, parent, parentKey) {
+     this.data = data
+     this.parent = parent
+     this.parentKey = parentKey
+     this.eventsBus = new Event()
+     this.makeObserver(data)
+   }
+
+   let p = Observer.prototype
+   p.makeObserver = function(obj) {
+    let val
+    for (key in obj) {
+      // 只遍历当前对象的属性
+      if (obj.hasOwnProperty(key)) {
+        val = obj[key]
+        // 深度遍历
+        if (typeof val === 'object') {
+          new Observer(val, this, key)
+        }
+        this.setterAndGetter(key, val)
+      }
+    }
+   }
+
+   p.setterAndGetter = function(key, val) {
+    let self = this
+    Object.defineProperty(this.data, key, {
+      enumerable: true,
+      configurable: true,
+      get: function() {
+        console.log(`你访问了${key}`)
+        return val
+      },
+      set: function(newVal) {
+        console.log(`你设置了${key}, 新的值为${newVal}`)
+        if (self.parent) {
+          // 若有父类则调用父类的监听事件
+          self.parent.eventsBus.emit(self.parentKey, val, newVal)
+        }
+        self.eventsBus.emit(key, val, newVal)
+        if (val === newVal) return
+        val = newVal
+        // 新的值为对象，添加监听       
+        if (typeof val === 'object') {
+          new Observer(val)
+        }
+      }
+    })
+   }
+
+   p.$watch = function (attr, callback) {
+     this.eventsBus.on(attr, callback)
+   }
+
+   // 实现一个事件
+   function Event() {
+     this.events = {}
+   }
+
+   let ev = Event.prototype
+
+   // 事件监听
+   ev.on = function (eventType, callback) {
+     if (this.events[eventType]) {
+       this.events[eventType].push(callback)
+     } else {
+       this.events[eventType] = [callback]
+     }
+     console.log(typeof this.events)
+   }
+
+  // 取消监听
+   ev.off = function (eventType) {
+     for (let key in this.events) {
+       if (this.events.hasOwnProperty(key) && key === eventType) {
+         delete this.events[key]
+       }
+     }
+   }
+
+   // 触发事件
+   ev.emit = function (eventType) {
+     let args = Array.prototype.slice.call(arguments, 1) // 其他参数
+    this.events[eventType] && this.events[eventType].forEach(callback => callback(...args)) // 执行全部回调函数
+   }
+
+   let app2 = new Observer({
+    name: {
+        firstName: 'shaofeng',
+        lastName: 'liang'
+    },
+    age: 25
+    });
+
+    app2.$watch('name', function (newName) {
+        console.log('我的姓名发生了变化，可能是姓氏变了，也可能是名字变了。')
+    });
+
+    app2.data.name.firstName = 'hahaha';
+    // 输出：我的姓名发生了变化，可能是姓氏变了，也可能是名字变了。
+    app2.data.name.lastName = 'blablabla';
+    // 输出：我的姓名发生了变化，可能是姓氏变了，也可能是名字变了。
+  </script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>bubbleSort</title>
+</head>
+<body>
+    
+    <script>
+        // 稳定排序
+        // 时间复杂度 O(n^2)
+        var arr = [1, 3, 5, 2, 4, 9];
+        // 正序
+        function bubbleSort(arr) {
+            for (var i = 0; i < arr.length; i++) {
+                for (j = 0; j < arr.length - i; j++) {
+                    if (arr[j + 1] < arr[j]) {
+                        var temp = arr[j + 1];
+                        arr[j + 1] = arr[j];
+                        arr[j] = temp;
+                    }
+                }
+            }
+            return arr;
+        }
+        console.log(bubbleSort(arr));
+
+        // 逆序
+        function bubbleSort2(arr) {
+            var len = arr.length;
+            for (var i = len; i >= 1; i--) {
+                for (var j = 0; j < i; j++) {
+                    if (arr[j] > arr[j + 1]) {
+                        var temp = arr[j];
+                        arr[j] = arr[j + 1];
+                        arr[j + 1] = temp;
+                    }
+                }
+            }
+            return arr;
+        }
+        console.log(bubbleSort2(arr));
+
+
+    function swapArr(i, j, arr) {
+      var temp = arr[i]
+      arr[i] = arr[j]
+      arr[j] = temp
+    }
+         // 双向冒泡排序
+    var bothwayBubbleSort = function(arr) {
+      var len = arr.length
+      for (var i = 0; i < len; len--) { // len减,每轮最后一个都是最大的
+        // 将最小的放前面
+        for (var j = len; j > i; j--) {
+          if (arr[j] < arr[j - 1]) {
+            swapArr(j, j - 1, arr)
+          }
+        }
+        i++ // 第一个已经是最小的
+        // 将最大的放后面
+        for (var j = i; j < len; j++) {
+          if (arr[j] > arr[j + 1]) {
+            swapArr(j, j + 1, arr)
+          }
+        }
+      }
+      return arr
+    }
+    </script>
+</body>
+</html>

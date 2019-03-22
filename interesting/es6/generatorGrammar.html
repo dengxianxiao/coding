@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    
+    <script>
+        
+        // Generator 函数是 ES6 提供的一种异步编程解决方案
+        // Generator 函数有多种理解角度。语法上，首先可以把它理解成，Generator 函数是一个状态机，封装了多个内部状态
+        function g1() {
+            function* helloWorldGenerator() {
+            yield 'hello';
+            yield 'world';
+            return 'done';
+            }
+
+            var hw = helloWorldGenerator();
+            console.log(hw);
+            console.log(hw.next()) // {value: 'hello', done: false}
+            console.log(hw.next()) // {value: 'world', done: false}
+            console.log(hw.next()) // {value: 'done', done: true}
+            console.log(hw.next()) // {value: undefined, done: true}
+        }
+        g1()
+    </script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Direct InsertSort</title>
+</head>
+<body>
+  
+  <script>
+    // 稳定排序，时间复杂度O(n^2)
+    var arr = [5, 4, 2, 3, 1]
+    // 直接插入排序
+    var directInsertSort = function(arr) {
+      var len = arr.length
+      var index
+      var currentValue
+      for (var i = 1; i < len; i++) {
+        index = i - 1 // 待比较的下标
+        currentValue = arr[i] // 当前值
+        while (index >= 0 && arr[index] > currentValue) {
+          arr[index + 1] = arr[index] // 大的元素后移一位
+          index-- // 下标往前移
+        }
+        if (index + 1 !== i) {
+          // 下标发生变化，表示有值移动，将当前值赋值给空的位置
+          arr[index + 1] = currentValue
+        }
+      }
+      return arr
+    }
+    console.log(directInsertSort(arr))
+  </script>
+</body>
+</html>

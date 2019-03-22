@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Closure Implement</title>
+</head>
+<body>
+  <script>
+    function Shape() {
+      const this$ = {}
+
+      class Shape {
+        constructor(width, height) {
+          this$.width = width
+          this$.height = height
+        }
+        get area() {
+          return this$.width * this$.height
+        }
+      }
+
+      const instance = new Shape(...arguments)
+      Object.setPrototypeOf(Object.getPrototypeOf(instance), this)
+      return instance
+    }  
+
+    const square = new Shape(10, 10);
+    console.log(square.area); // 100
+    console.log(square.width); // undefined
+    console.log(square instanceof Shape); // true
+  </script>
+</body>
+</html>

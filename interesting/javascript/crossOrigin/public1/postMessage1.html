@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>postMessage 1</title>
+</head>
+<body>
+  <iframe id="postMessage2" src="http://localhost:3001/postMessage2.html" style="width: 200px;height:50px"></iframe>
+  <div id="postMessage">postMessage1</div>
+  <script>
+    window.onload = function() {
+      // 向目标源发送信息
+      var message = document.getElementById('postMessage').innerText
+      var url = 'http://localhost:3001'
+      document.getElementById('postMessage2').contentWindow.postMessage(message, url)
+    }
+    
+    window.onmessage = function(event) {
+      console.log(event.data)
+    }
+
+    // function receiveMessage(event) {
+    //   if(event.origin !== url) {
+    //     return
+    //   }
+    //   console.log(event)
+    // }
+
+    // window.addEventListener("message", receiveMessage, false)
+  </script>
+</body>
+</html>

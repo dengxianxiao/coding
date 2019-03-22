@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Promise</title>
+</head>
+<body>
+  <script>
+    const p1 = new Promise(function(resolve, reject) {
+      setTimeout(() => {
+        reject(new Error('fail'))
+      }, 4000)
+    })
+    const p2 = new Promise(function(resolve, reject) {
+      setTimeout(() => {
+        resolve(p1)
+      }, 2000)
+    })
+    // p2.then(result => console.log(result))
+    // .catch(error => console.log(error))
+
+    function doSomething() {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve(1)
+          console.log(2)
+        }, 2000)
+      })
+    }
+
+    async function test() {
+      let v = await doSomething()
+      console.log(v)
+      console.log(3)
+    }
+    
+
+    test()
+  </script>
+</body>
+</html>

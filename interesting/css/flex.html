@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>flex</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    .box {
+      width: 300px;
+      height: 300px;
+      margin: 10px;
+      padding: 10px;
+      border: 1px solid #ccc;
+    }
+    .item {
+      display: block;
+      margin: 10px;
+      width: 70px;
+      height: 70px;
+      border-radius: 35px;
+      background-color: #4e4a4a;
+    }
+
+    .box-flex {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    
+    .row {
+      display: flex;
+      flex-flow: row wrap;
+    }
+    .grid-cell {
+      min-height: 50px;
+      background-color: #ccc;
+      border-radius: 5px;
+    }
+    .grid-cell {
+      flex: 1;
+    }
+    [class*=col-] {
+      padding: 10px;
+      text-align: center;
+    }
+    .col-1 {flex: 0 0 8.33%;}
+    .col-2 {flex: 0 0 16.66%;}
+    .col-3 {flex: 0 0 25%;}
+    .col-4 {flex: 0 0 33.33%;}
+    .col-5 {flex: 0 0 41.66%;}
+    .col-6 {flex: 0 0 50%;}
+    .col-7 {flex: 0 0 58.33%;}
+    .col-8 {flex: 0 0 66.66%;}
+    .col-9 {flex: 0 0 75%;}
+    .col-10 {flex: 0 0 83.33%;}
+    .col-11 {flex: 0 0 91.66%;}
+    .col-12 {flex: 0 0 100%;}
+
+
+    .container {
+      margin-top: 40px;
+      display: flex;
+      min-height: 400px;
+      flex-direction: column;
+    }
+    header, footer {
+      min-height: 60px;
+      background-color: #ccc;
+    }
+    .content {
+      display: flex;
+      flex: 1;
+    }
+    .nav, .aside {
+      flex: 0 0 12em;
+    }
+    .nav {
+      background-color: #ddd;
+    }
+    .main {
+      flex: 1;
+      background-color: #eee;
+    }
+    .aside {
+      background-color: #aaa;
+    }
+    @media (max-width: 768px) {
+      .content {
+        flex-direction: column;
+        flex: 1;
+      }
+      .nav, .main, .aside {
+        flex: auto;
+      }
+    }
+
+    .parent {
+      width: 200px;
+      height: 200px;
+      display: flex;
+      flex-flow: row wrap;
+      align-content: flex-start;
+      background-color: #8b6d6d;
+    }
+    .child {
+      box-sizing: border-box;
+      flex: 0 0 25%;
+      height: 50px;
+      background-color: white;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <div class="box box-flex">
+    <span class="item"></span>
+    <span class="item"></span>
+    <span class="item"></span>
+    <span class="item"></span>
+    <span class="item"></span>
+    <span class="item"></span>
+    <span class="item"></span>
+    <span class="item"></span>
+    <span class="item"></span>
+  </div>
+
+  <!-- 栅格布局 -->
+  <div class="grid">
+    <div class="row">
+      <div class="grid-cell col-3">3/12</div>
+      <div class="grid-cell col-3">3/12</div>
+      <div class="grid-cell col-3">3/12</div>
+      <div class="grid-cell col-3">3  /12</div>
+    </div>
+  </div>
+
+  <!-- 圣杯布局 -->
+  <div class="container">
+    <header>header</header>
+    <div class="content">
+      <nav class="nav">nav</nav>
+      <main class="main">main</main>
+      <aside class="aside">aside</aside>
+    </div>
+    <footer>footer</footer>
+  </div>
+
+  <!-- 流式布局 -->
+  <div class="parent">
+    <div class="child"></div>
+    <div class="child"></div>
+    <div class="child"></div>
+    <div class="child"></div>
+    <div class="child"></div>
+    <div class="child"></div>
+    <div class="child"></div>
+    <div class="child"></div>
+    <div class="child"></div>
+    <div class="child"></div>
+    <div class="child"></div>
+  </div>
+</body>
+</html>

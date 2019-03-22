@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Dynamic Data Binding 2</title>
+</head>
+<body>
+  
+  <script>
+    // 发布-订阅模式
+    function PubSub() {
+      this.handlers = {}
+    }  
+    PubSub.prototype = {
+      // 订阅事件
+      on: function(eventType, handler) {
+        let _this = this
+        if (!(eventType in _this.handlers)) {
+          _this.handlers[eventType] = []
+        }
+        _this.handlers[eventType].push(handler)
+        return this
+      },
+      // 发布事件
+      emit: function(eventType) {
+        let _this = this
+        let handlerArgs = Array.prototype.slice.call(arguments, 1)
+        for (let i = 0; i < _this.handlers[eventType].length; i++) {
+          _this.handlers[eventType][i].apply(_this, handlerArgs)
+        }
+        return _this
+      }
+    }
+
+    let pubSub = new PubSub()
+    pubSub.on('A', function(data) {
+      console.log('监听A ', data)
+    })
+    pubSub.emit('A', 'emit A haha')
+
+
+
+
+    // 监听对象数据的访问和变化
+    function Observer(data) {
+      this.data = data
+      this.pubSub = new PubSub() // 用于发布-订阅事件
+      this.walk(data)
+    }  
+
+    let p = Observer.prototype
+
+    p.walk = function(obj) {
+      let value
+      for (key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          value = obj[key]
+          // 如果值仍是对象，递归调用
+          if (typeof value === 'object') {
+            new Observer(value)
+          }
+
+          this.convert(key, value)
+        }
+      }
+    }
+
+    // 重新定义属性
+    p.convert = function(key, value) {
+      let _this = this
+      Object.defineProperty(this.data, key, {
+        enumerable: true,
+        configurable: true,
+        get: function () {
+          console.log(`你访问了${value} `)
+          return value
+        },
+        set: function (newValue) {
+          console.log(`你设置了${key}, 新的值为 ${newValue} `)
+          if (newValue === value) return
+          value = newValue
+
+          console.log(this)
+          console.log(_this)
+          // 触发属性改变事件
+          if (_this.pubSub.handlers.hasOwnProperty(key)) {
+            _this.pubSub.emit(key, value)
+          }
+        }
+      })
+    }
+
+    // 观察方法
+    p.$watch = function (eventType, callback) {
+      this.pubSub.on(eventType, callback)
+    }
+
+    let app1 = new Observer({
+      name: 'youngwind',
+      age: 25
+    })
+    app1.$watch('age', function(age) {
+      console.log(`现在我的年龄变了，现在已经是：${age}岁了`)
+    })
+    app1.data.age = 30
+  </script>
+</body>
+</html>

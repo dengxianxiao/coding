@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Merge Sort</title>
+</head>
+<body>
+  
+  <script>
+    // 归并排序 稳定排序，时间复杂度O(nlogn)
+    // 归并排序建立在归并操作之上, 它采取分而治之的思想, 
+    // 将数组拆分为两个子数组, 分别排序, 最后才将两个子数组合并; 
+    // 拆分的两个子数组, 再继续递归拆分为更小的子数组, 进而分别排序, 
+    // 直到数组长度为1, 直接返回该数组为止.
+
+    function mergeSort(arr) {
+      var len = arr.length
+      if (len < 2) {
+        return arr
+      }
+      var mid = len >> 1 // 除2再取整
+      var leftArr = arr.slice(0, mid)
+      var rightArr = arr.slice(mid)
+      return merge(mergeSort(leftArr), mergeSort(rightArr))
+    }
+
+    // 合并两个无序数组为有序
+    function merge(leftArr, rightArr) {
+      var result = []
+      while(leftArr.length && rightArr.length) {
+        var item
+        if (leftArr[0] <= rightArr[0]) {
+          item = leftArr.shift()
+        } else {
+          item = rightArr.shift()
+        }
+        result.push(item)
+      }
+      return result.concat(leftArr.length ? leftArr : rightArr)
+    }
+
+
+    var arr = [1, 4, 2, 6, 3]
+    console.log(mergeSort(arr))
+  </script>
+</body>
+</html>

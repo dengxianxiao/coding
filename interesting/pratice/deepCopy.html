@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>DeepCopy</title>
+</head>
+<body>
+  <script>
+    var arr = ['old', 5, true, undefined, null, [[[4]]]]
+    var obj = {
+      'a': 12,
+      'b': 123,
+      'c': 1234,
+      'd': {
+        'e': {
+          'f': 12345
+        }
+      }
+    }
+
+    // 浅拷贝
+    var newArr1 = arr.concat()
+    var newArr2 = arr.slice()
+    var newArr3 = Object.assign([], arr)
+    console.log(newArr3)
+    
+    var shallowCopy = function(obj) {
+      if (typeof obj !== 'object') {
+        return
+      }
+      
+      var newObj = obj instanceof Array ? []: {}
+      for (var key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          newObj[key] = obj[key]
+        }
+      }
+      return newObj
+    }
+    console.log(shallowCopy(obj))
+
+    // 深拷贝
+    function deepCopy(obj) {
+      if (typeof obj === 'function') {
+        // 拷贝函数
+        return new Function('return ' + obj.toString())()
+      } else {
+        var newObj = obj instanceof Array ? [] : {}
+        for (var key in obj) {
+          if (obj.hasOwnProperty(key)) {
+            if (obj[key] && typeof obj[key] === 'object') {
+              newObj[key] = obj[key] instanceof Array ? [] : {}
+              newObj[key] = deepCopy(obj[key])
+            } else if (typeof obj[key] === 'function') {
+              newObj[key] = new Function('return ' + obj[key].toString())()
+            } else {
+              newObj[key] = obj[key]
+            }
+          }
+        }
+        return newObj
+      }
+    }
+
+    var obj1 = {
+      'a': function(a) {
+        alert('haha')
+      },
+      'b': {
+        'c': {
+          'd': 123
+        }
+      },
+      'e': 'haha'
+    }
+    console.log(deepCopy(obj1))
+  </script>
+</body>
+</html>

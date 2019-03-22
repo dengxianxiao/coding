@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>float</title>
+  <style>
+    /*
+      float: none, left, right
+      不管一个元素是行内元素还是块级元素，
+      如果被设置了浮动，那浮动元素会生成一个块级框，可以设置它的width和height
+    */
+    .box {
+      padding: 10px;
+      margin: 10px;
+      background: #00ff90;
+    }
+    .float-ele {
+      float: left;
+      background: #ff6a00;
+      width: 100px;
+      height: 50px;
+      text-align: center;
+      margin: 10px;
+    }
+
+    /* 
+      clear: left, right, both 属性: 确保当前元素的左右两侧不会有浮动元素
+      使用clear属性的时候要记住：clear只对元素本身的布局起作用
+     */
+    .clear-left {
+      clear: left;
+    }
+    .clear-right {
+      clear: right;
+    }
+    .clear-both {
+      clear: both;
+    }
+
+    /* 
+      清除浮动
+      1. 在父元素底部添加额外的标签，<div style="clear:both"></div>
+      优点：简单直接，初学者常常使用的方法，也易于理解
+      缺点：增加额外的无意义标签，不利于语义化，每次清除都要添加额外的空标签，造成浪费
+
+      2. 父级元素添加overflow:hidden，这个会触发BFC
+      优点：代码量少，没有额外的标签
+      缺点：如果子元素超出父元素的范围，会造成超出的部分被隐藏
+
+      3. 使用伪元素  :after
+
+      4. 给浮动元素父级设置高度
+      缺点：在浮动元素高度不确定的时候不适用
+
+      5. 给父级元素设置为浮动
+      缺点：太多元素浮动带来很多不确定性
+
+      6. 父级设置成inline-block
+      缺点：父级的margin左右auto失效，无法使用margin: 0 auto;居中了
+
+      7. 
+    */
+    .clearfix-overflow {
+      overflow: hidden;
+      zoom: 1; /*支持IE6, 7 hasLayout */
+    }
+    .clearfix {
+      zoom: 1;
+    }
+    .clearfix::after {
+      content: '';
+      clear: both;
+      display: block;
+      visibility: hidden;
+    }
+  </style>
+</head>
+<body>
+  <!-- clear 属性 -->
+  <div class="box">
+      <div class="float-ele">浮动元素1</div>
+      <div class="float-ele clear-left">浮动元素2</div>
+      <div class="float-ele">浮动元素3</div>
+      <div style="clear:both"></div>
+  </div>
+
+    <!-- 1.清除浮动： 在父元素底部添加额外的标签，<div style="clear:both"></div> -->
+  <div class="box">  
+    <span class="float-ele">
+      浮动元素
+    </span>
+    <span>
+      普通元素普通元素普通元素普通元素普通元素普通元素普通元素普通元素普通元素
+    </span>
+    <div style="clear:both"></div>
+  </div>
+
+  <!-- 2.清除浮动：父级元素添加overflow:hidden -->
+  <div class="box clearfix-overflow">  
+      <span class="float-ele">
+        浮动元素浮动元素浮动元素浮动元素浮动元素浮动元素浮动元素
+        浮动元素浮动元素浮动元素
+      </span>
+      <span>
+        普通元素普通元素普通元素普通元素普通元素普通元素普通元素普通元素普通元素
+      </span>
+    </div>
+
+  <!-- 2.清除浮动：使用伪元素：after -->
+  <div class="box clearfix">  
+      <span class="float-ele">
+        浮动元素
+      </span>
+      <span>
+        普通元素普通元素普通元素普通元素普通元素普通元素普通元素普通元素普通元素
+      </span>
+    </div>
+</body>
+</html>

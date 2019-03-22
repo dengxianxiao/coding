@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>binary Insert Sort</title>
+</head>
+<body>
+  <script>
+    // 二分插入排序，稳定的排序，时间复杂度O(n^2)
+    // 从当前已排好序的数组中查找位置插入
+    var arr = [1, 4, 2, 6, 3]
+
+    var binaryInsertSort = function(arr) {
+      var low
+      var hight
+      var mid
+      var current
+      for (var i = 1; i < arr.length; i++) {
+        low = 0
+        hight = i - 1
+        current = arr[i]
+        while (low <= hight) {
+          mid = (low + hight) >> 1 // 二进制右移一位，相当于Math.floor(5/2) = 2
+          if (arr[i] > arr[mid]) {
+            low = mid + 1
+          } else {
+            hight = mid - 1
+          }
+        }
+        for (var j = i; j > low; j--) {
+          arr[j] = arr[j - 1] // 插入位置之后的元素全部后移一位
+        }
+        arr[low] = current
+        console.log(arr)
+      }
+      return arr
+    }
+    console.log(binaryInsertSort(arr))
+  </script>
+</body>
+</html>

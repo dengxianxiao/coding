@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>JSONP</title>
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+  <div>JSONP test</div>
+  <script>
+    
+    function localHandler(data) {
+      console.log('JSONP动态调用远程服务获取数据, data.result = %s', data.result)
+    }
+    var url = 'http://localhost:3001/remove.js?id=a1&callback=localHandler'
+    var script = document.createElement('script')
+    script.setAttribute('src', url)
+    document.body.appendChild(script)
+
+    // 使用jquery 使用jsonp跨域
+    jQuery(document).ready(function() {
+      $.ajax({
+        type: 'get',
+        async: false,
+        url: 'http://localhost:3001/remove.js?id=a1',
+        dataType: 'jsonp',
+        jsonp: 'callback',
+        jsonpCallback: 'localHandler',
+        success: function(json) {
+          console.log('jquery 使用jsonp跨域获取数据成功, json.result = %s', json.result)
+        },
+        error: function(error) {
+          console.log(error)
+        }
+      })
+    })
+  </script>
+</body>
+</html>

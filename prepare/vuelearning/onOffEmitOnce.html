@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>On Off Emit Once</title>
+</head>
+<body>
+  <script>
+    // class 写法
+    class EventEmiter {
+      constructor() {
+        this.events = {}
+      }
+      // 添加监听事件
+      on (event, cb) {
+        // 多个事件
+        if(Array.isArray(event)) {
+          for (let i = 0; i < event.length; i++) {
+            this.on(event[i], cb)
+          }
+        } else { // 单个事件
+          (this.events[event] || (this.events = [])).push(cb)
+        }
+      }
+      // 触发事件
+      emit (event, args) {
+        let cbs = this.events[event]
+        if (cbs) {
+          const arg = Array.prototype.slice.call(arguments, 1)
+          for (let i = 0; i < cbs.length; i++) {
+            cbs[i].apply(this, arg)
+          }       
+        }    
+      } 
+      // 只监听一次的事件
+      once (event, cb) {
+        function onceCb() {
+          cb.apply(this, arguments)
+          this.off(event, cb)
+        }
+        onceCb.cb = cb // on函数的cb属性添加一个标记，cb，方便循环off清除(提供了事件与回调的时候)
+        this.on(event, onceCb)
+      } 
+      // 销毁事件
+      off (event, cb) {
+        /*移除自定义事件监听器。
+        如果没有提供参数，则移除所有的事件监听器；
+        如果只提供了事件，则移除该事件所有的监听器；
+        如果同时提供了事件与回调，则只移除这个回调的监听器。
+        */
+        if (!arguments.length) {
+        this.events = Object.create(null)
+        }
+        if (Array.isArray(event)) {
+          for (let i = 0; i < event.length; i++) {
+            this.off(event[i], cb)
+          }
+        }
+        if (!cb) {
+          this.events[event] = null
+        } else {
+          let cbs = this.events[event]
+          let i = cbs.length
+          let fn
+          while (i--) {
+            fn = cbs[i]
+            if (fn === cb || fn.cb === fn) {
+              cbs.splice(i, 1)
+              break
+            }
+          }
+        }
+      }
+    }
+
+
+
+    let events = new EventEmiter()
+
+    function fn(a) {
+      console.log(a)
+    }
+
+    events.on(['a', 'b'], fn)
+    // events.on('b', fn)
+    events.once('c', fn)
+    console.log(events)
+    events.off('b')
+    events.emit('a', 'aa')
+    events.emit('b', 'bb')
+    events.emit('c', 'cc')
+    events.emit('c', 'cc')
+  </script>
+</body>
+</html>

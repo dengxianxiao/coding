@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+    <div id="app">
+        <p>姓名：{{user.name}}</p>
+        <p>年龄：{{user.age}}</p>
+    </div>
+  <script>
+    function Vue(obj) {
+      this.el = obj.el
+      this.data = obj.data
+      this.render()
+    }
+    Vue.prototype.render = function() {
+      this.dom = document.querySelector(this.el)
+      let html = this.dom.innerHTML
+      let pattern = /\{\{(.*?)\}\}/g
+      let self = this
+      html.match(pattern).forEach(function (val) {
+        let s = val.substr(2, val.length - 4).split('.') // substr(start, length) 从start开始取长度length的值
+        let r = self.data
+        s.forEach(v => r = r[v])
+        html = html.replace(val, r) // 值替换
+      })
+      this.dom.innerHTML = html
+    }
+
+    let app = new Vue({
+      el: '#app',
+      data: {
+        user: {
+          name: 'youngwind',
+          age: 25
+        }
+      }
+    });
+  </script>
+</body>
+</html>

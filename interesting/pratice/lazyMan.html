@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>LazyMan</title>
+</head>
+<body>
+  
+  <script>
+    function LazyMan(name) {
+      if (this.constructor !== LazyMan) {
+        return new LazyMan(name)
+      }
+
+      this.task = []
+      var _this = this
+      var fn = function() {
+        console.log(`Hi, This\'s is ${name}`)
+        _this.next()
+      }
+      this.task.push(fn)
+      setTimeout(() => {
+        _this.next() // 等待所有任务初始化完成后，在下一个时间循环开始执行任务
+      }, 0)
+    }
+
+    LazyMan.prototype.next = function() {
+      var fn = this.task.shift()
+      fn && fn()
+    }
+
+    LazyMan.prototype.eat = function(food) {
+      var _this = this
+      var fn = function() {
+        console.log(`Eatting ${food}`)
+        _this.next()
+      }
+      this.task.push(fn)
+      return this
+    }
+
+    LazyMan.prototype.sleep = function(time) {
+      var _this = this
+      var fn = function() {
+        console.log(`Wake up for ${time} ms`)
+        setTimeout(() => {
+          _this.next()
+        }, time * 1000)
+      }
+      this.task.push(fn)
+      return this
+    }
+
+    LazyMan.prototype.sleepFirst = function(time) {
+      var _this = this
+      var fn = function() {
+        console.log(`first: Wake up for ${time} ms`)
+        setTimeout(() => {
+          _this.next()
+        }, time * 1000)
+      }
+      this.task.unshift(fn)
+      return this
+    }
+
+    LazyMan('hank').sleep(3).eat('dinner').sleepFirst(2)
+  </script>
+</body>
+</html>

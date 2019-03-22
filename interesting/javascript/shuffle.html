@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>乱序</title>
+</head>
+<body>
+  <script>
+    var arr = [1, 2, 3, 4, 5]
+    function shuffle(arr) {
+      for (var i = 0; i < arr.length; i++) {
+        var j = Math.floor(Math.random() * i)
+        var temp = arr[i]
+        arr[i] = arr[j]
+        arr[j] = temp
+      }
+      return arr
+    }
+    console.log(shuffle(arr))
+  </script>
+</body>
+</html>

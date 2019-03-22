@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    function t1() {
+      var tmp = 'abc'
+      if (true) {
+        // 暂时性死区
+        tmp = 'bcd' // tmp is not defined
+        var tmp = 'cde'
+      }
+      console.log(tmp)
+    }
+
+    var date = new Date().toLocaleString()
+    function f() {
+      console.log('date = ' + date)
+      if(false) {
+        var date = 'a'
+      }
+    }
+    f() // undefined, var date 变量声明提升
+
+    function t3() {
+      function f() { console.log('I am outside!'); }
+
+      (function () {
+        if (false) {
+          // 重复声明一次函数f
+          function f() { console.log('I am inside!'); }
+        }
+
+        f(); // f is not a funciton, es6环境中不会出现函数声明提升
+      }());
+    }
+    t3()
+  </script>
+</body>
+</html>

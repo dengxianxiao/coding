@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>DeepCopy</title>
+</head>
+<body>
+  <script>
+    var deepCopy = function(obj) {
+      if (typeof obj === 'function') {
+        return new Function('return ' + obj.toString())()
+      } else {
+        var newObj = obj instanceof Array ? [] : {}
+        for (var key in obj) {
+          if (typeof obj[key] === 'object') {
+            newObj[key] = obj[key] instanceof Array ? [] : {}
+            newObj[key] = deepCopy(obj[key])
+          } else if (typeof obj[key] === 'function') {
+            newObj[key] = new Function('return ' + obj[key].toString())()
+          } else {
+            newObj[key] = obj[key]
+          }
+        }
+        return newObj
+      }
+    }
+
+    var obj = [
+      ['a', 'b'],
+      {
+        'c': 1,
+        'd': 2,
+        'e': function ee() {
+          alert('11')
+        }
+      },
+      function test() {
+        console.log('test deepCopy')
+      }
+    ]
+    console.log(deepCopy(obj))
+  </script>
+</body>
+</html>

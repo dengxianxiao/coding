@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Array Repeat</title>
+</head>
+<body>
+  <script>
+    // 1. 双层循环
+    var arr = [1, 2, 1, '1', '1'];
+    function unique1(arr) {
+      var result = [];
+      for (var i = 0; i < arr.length; i++) {
+        for (var j = 0; j < result.length; j++) {
+          if (arr[i] === result[j]) {
+            break;
+          }
+        }
+        if (j === result.length) {
+          result.push(arr[i])
+        }
+      }
+      return result;
+    }
+    // console.log(unique1(arr))
+
+    // 2. 使用index判断是否存在
+    function unique2(arr) {
+      var result = [];
+      for (var i = 0; i < arr.length; i++) {
+        if (result.indexOf(arr[i]) === -1) {
+          result.push(arr[i])
+        }
+      }
+      return result;
+    }
+    // console.log(unique2(arr))
+
+    // 3. 先排序后去重
+    function unique3(arr) {
+      var result = [];
+      var sortArr = arr.concat().sort();
+      var seen;
+      for (var i = 0; i < sortArr.length; i++) {
+        if (i === 0 || seen !== sortArr[i]) {
+          result.push(sortArr[i])
+        }
+        seen = sortArr[i]
+      }
+      return result;
+    }
+    // console.log(unique3(arr))
+
+    // 4. ES5 filer方法
+    function unique4(arr) {
+      return arr.filter(function(item, index, array) {
+        return array.indexOf(item) === index
+      })
+      // return arr.filter((item, index, array) => array.indexOf(item) === index)
+    }
+    // console.log(unique4(arr))
+
+    // 5. 使用Object 键值对
+    function unique5(arr) {
+      var obj = {}
+      return arr.filter(function(item, index, array) {
+        // 对象的键只能是字符串，使用类型+序列化的值保证一样
+        return obj.hasOwnProperty(typeof item + JSON.stringify(item)) ? false : (obj[item] = true)
+      })
+    }
+    // console.log(unique5(arr))
+
+    // 6. 使用ES6 Set
+    function unique6(arr) {
+      // return Array.from(new Set(arr))
+      return [...new Set(arr)]
+    }
+    // console.log(unique6(arr))
+
+    // 7. 使用ES6 Map
+    function unique7(arr) {
+      const seen = new Map()
+      return arr.filter(function(a) {
+        return !seen.has(a) && seen.set(a, 1)
+      })
+    }
+    console.log(unique7(arr))
+  </script>
+</body>
+</html>

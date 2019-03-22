@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>lazyMan</title>
+</head>
+<body>
+  
+  <script>
+
+    // lazyMan题目
+    // 实现一个LazyMan，可以按照以下方式调用:
+    // LazyMan(“Hank”)输出:
+    // Hi! This is Hank!
+
+    // LazyMan(“Hank”).sleep(10).eat(“dinner”)输出
+    // Hi! This is Hank!
+    // //等待10秒..
+    // Wake up after 10
+    // Eat dinner~
+
+    // LazyMan(“Hank”).eat(“dinner”).eat(“supper”)输出
+    // Hi This is Hank!
+    // Eat dinner~
+    // Eat supper~
+
+    // LazyMan(“Hank”).sleepFirst(5).eat(“supper”)输出
+    // //等待5秒
+    // Wake up after 5
+    // Hi This is Hank!
+    // Eat supper
+
+    function LazyMan(name) {
+      if (this.constructor !== LazyMan) {
+        return new LazyMan(name)
+      }
+      this.task = []
+      var _this = this
+      var fn = function() {
+        console.log('Hi! This is %s', name)
+        _this.next()
+      }
+      this.task.push(fn)
+      setTimeout(() => {
+        _this.next() // 等待所有任务初始化完成后，在下一个事件循环开始执行任务task
+      }, 0);
+    }
+    LazyMan.prototype.next = function() {
+      var fn = this.task.shift()
+      fn && fn()
+    }
+    LazyMan.prototype.eat = function(food) {
+      var _this = this
+      var fn = function() {
+        console.log('eat ' + food)
+        _this.next()
+      }
+      this.task.push(fn)
+      return this
+    }
+    LazyMan.prototype.sleep = function(time) {
+      var _this = this
+      var fn = function() {
+        setTimeout(() => {
+          console.log('Wake up after %s s', time)
+          _this.next()
+        }, time * 1000)
+      }
+      this.task.push(fn)
+      return this
+    }
+    LazyMan.prototype.sleepFirst = function(time) {
+      var _this = this
+      var fn = function() {
+        setTimeout(() => {
+          console.log('Wake up after %s s', time)
+          _this.next()
+        }, time * 1000)
+      }
+      this.task.push(fn)
+      return this
+    }
+
+    LazyMan('Hank').sleep(2).eat('apple')
+  </script>
+</body>
+</html>

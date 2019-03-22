@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>三栏式布局</title>
+  <style>
+    .clearfix {
+      zoom: 1;
+    }
+    .clearfix::after {
+      content: '';
+      clear: both;
+      display: block;
+    }
+    .common-container {
+      margin: 20px;
+      padding: 20px;
+      background-color: #eee;
+      border: 1px solid #999;
+    }
+    .common-left, .common-right, .common-main {
+      background-color: white;
+      padding: 10px;
+      margin: 10px;
+      border: 1px solid #999;
+    }
+    .common-left, .common-right {
+      width: 200px;
+    }
+
+    /* 使用浮动 */
+    .float-left {
+      margin-top: 0;
+      float: left;      
+    }
+    .float-right {
+      margin-top: 0;
+      float: right;
+    }
+    .float-main {
+      margin-left: 260px;
+      margin-right: 260px;
+    }
+
+
+    /* 使用定位 */
+    .position-container {
+      position: relative;
+    }
+    .position-left {
+      margin-top: 0;
+      position: absolute;
+      left: 20px;
+    }
+    .position-right {
+      margin-top: 0;
+      position: absolute;
+      right: 20px;
+    }
+    .position-main {
+      margin-left: 260px;
+      margin-right: 260px;
+    }
+
+
+    /* 使用flex */
+    .flex-container {
+      display: flex;
+    }
+    .flex-left, .flex-right {
+      /* 强制两边固定宽度 */
+      flex: 0 0 200px;
+    }
+    .flex-main {
+      flex: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="common-container clearfix">
+    <h3>使用float实现三列布局</h3>
+    <div class="common-left float-left">左边内容</div>
+    <div class="common-right float-right">右边内容</div>
+    <div class="common-main float-main">
+        中间内容中间内容中间内容中间内容
+        中间内容中间内容中间内容中间内容中间内容
+        中间内容中间内容中间内容中间内容
+        中间内容中间内容中间内容中间内容中间内容
+    </div>
+  </div>
+
+
+  <div class="common-container position-container">
+    <h3>使用position实现三列布局</h3>
+    <div class="common-left position-left">左边内容</div> 
+    <div class="common-right position-right">右边内容</div>    
+    <div class="common-main position-main">
+      中间内容中间内容中间内容中间内容
+      中间内容中间内容中间内容中间内容中间内容
+      中间内容中间内容中间内容中间内容
+      中间内容中间内容中间内容中间内容中间内容
+    </div>     
+  </div>
+
+
+  <div class="common-container">
+    <h3>使用flex实现三列布局</h3>
+    <div class="flex-container">
+      <div class="common-left flex-left">左边内容</div>
+      <div class="common-main flex-main">
+        中间内容中间内容中间内容中间内容
+        中间内容中间内容中间内容中间内容中间内容
+        中间内容中间内容中间内容中间内容
+        中间内容中间内容中间内容中间内容中间内容
+      </div>
+      <div class="common-right flex-right">右边内容</div>  
+    </div>    
+  </div>
+</body>
+</html>

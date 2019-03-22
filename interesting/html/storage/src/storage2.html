@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>storage 2</title>
+</head>
+<body>
+  <div>username = <span id="username"></span></div>
+  <div>age = <span id="age"></span></div>
+  <div>birthday = <span id="birthday"></span></div>
+  <div>hobby = <span id="hobby"></span></div>
+
+  <div>change key = <span id="change-key"></span></div>
+  <div>change oldValue = <span id="change-oldValue"></span></div>
+  <div>change newValue = <span id="change-newValue"></span></div>
+  <div>change url = <span id="change-url"></span></div>
+  <div>change storage = <span id="change-storage"></span></div>
+
+  <script>
+    function getStorage() {
+      document.getElementById('username').innerText = localStorage.getItem('username')
+      document.getElementById('age').innerText = localStorage.getItem('age')
+      document.getElementById('birthday').innerText = localStorage.getItem('birthday')
+      document.getElementById('hobby').innerText = sessionStorage.getItem('hobby')
+    }
+    getStorage()
+    window.addEventListener('storage', function(e) {
+      console.log(e)
+      document.getElementById('change-key').innerText = e.key
+      document.getElementById('change-oldValue').innerText = e.oldValue
+      document.getElementById('change-newValue').innerText = e.newValue
+      document.getElementById('change-url').innerText = e.url
+      document.getElementById('change-storage').innerText = e.storageArea
+      getStorage()
+    })
+  </script>
+</body>
+</html>

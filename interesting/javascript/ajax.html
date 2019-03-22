@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>AJAX</title>
+</head>
+<body>
+  <button id="ajaxButton" type="button">make a request</button>
+  <script>
+    (function() {
+      document.getElementById('ajaxButton').addEventListener('click', makeRequest)
+
+      function makeRequest() {
+        httpRequest = new XMLHttpRequest()
+
+        if (!httpRequest) {
+          alert('not assert')
+          return
+        }
+
+        httpRequest.onreadystatechange = makeHandle
+        httpRequest.open('GET', 'testAJAX.html')
+        httpRequest.send()
+      }
+
+      function makeHandle() {
+        if (httpRequest.readyState === XMLHttpRequest.DONE) {
+          if (httpRequest.status === 200) {
+            console.log(httpRequest.responseText)
+          } else {
+            console.log('error')
+          }
+        }
+      }
+    })()
+    
+
+
+    // 使用Ajax的优缺点分别是什么？
+
+    // 优点
+    // 交互性更好。来自服务器的新内容可以动态更改，无需重新加载整个页面。
+    // 减少与服务器的连接，因为脚本和样式只需要被请求一次。
+    // 状态可以维护在一个页面上。JavaScript 变量和 DOM 状态将得到保持，因为主容器页面未被重新加载。
+    // 基本上包括大部分 SPA 的优点。
+
+    // 缺点
+    // 动态网页很难收藏。
+    // 如果 JavaScript 已在浏览器中被禁用，则不起作用。
+    // 有些网络爬虫不执行 JavaScript，也不会看到 JavaScript 加载的内容。
+    // 基本上包括大部分 SPA 的缺点。
+  </script>
+</body>
+</html>

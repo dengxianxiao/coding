@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  
+  <script>
+    function Foo(x, y) {
+      this.x = x
+      this.y = y
+      this.say = function() {
+        console.log(`hello x ${this.x}, y ${this.y}`)
+      }
+    }
+
+    let bar = {
+      x: 'haha bar',
+      y: 'hehe bar'
+    }
+    // call, apply都改变foo当前this指向的上下文，指向bar，并立即执行
+    // bind只改变上下文，要调用才执行
+    let foo = new Foo('a', 'b')
+    foo.say.call(bar)
+    foo.say.apply(bar)
+    foo.say.bind(bar)()
+
+    // call和apply的区别，call如果有多个参数要一个个传入，apply当做数组或类数组对象传入
+    let arr = [4, 3, 6, 8]
+    let maxVal = Math.max.call(this, arr) // NaN
+    let maxVal2 = Math.max.call(this, ...arr) // 8
+    let maxVal3 = Math.max.apply(this, arr) // 8
+    console.log(maxVal3)
+
+
+    // 面试题
+    // 封装一个函数：log(1) = 1, log(1, 2) = 1 2
+    function log() {
+      console.log.apply(this, arguments)
+    }
+    log(1)
+    log(1, 2)
+  </script>
+</body>
+</html>

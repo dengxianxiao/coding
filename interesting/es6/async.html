@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    
+    <script>
+        
+        function a1() {
+            function timeout(ms) {
+                return new Promise(resolve => {
+                    setTimeout(resolve, ms)
+                })
+            }
+            async function asyncPrint(value, ms) {
+                await timeout(ms);
+                console.log(value);
+            }
+            asyncPrint('hello world', 1000)
+        }
+        // a1();
+
+
+        // async 函数有多种使用形式。
+        function a2() {
+            // 函数声明
+            async function foo() {}
+
+            // 函数表达式
+            const bar = async function() {}
+
+            // 对象的方法
+            let obj = { async foo() {} }
+            obj.foo().then()
+
+            // class的方法
+            class Storage {
+                constructor() {
+                    this.cachePromise = caches.open('avatars')
+                }
+
+                async getAvatars(name) {
+                    const cache = await this.cachePromise
+                    return cache.match(`/avatar/${name}.jpg`)
+                }
+            }
+            const storage = new Storage()
+            sotrage.getAvatars('jake').then()
+
+            // 箭头函数
+            const foo2 = async () => {}
+        }
+
+        // fetch抓取数据
+        function a3() {
+            async function getTitle(url) {
+                let response = await fetch(url);
+                let html = await response.text();
+                return html.match(/<title>([\s\S]+)<\/title>/i)[1];
+            }
+            getTitle('https://tc39.github.io/ecma262/').then(console.log)
+        }
+        // a3()
+
+        function a4() {
+            // 正常情况下，await命令后面是一个 Promise 对象。如果不是，会被转成一个立即resolve的 Promise 对象。
+            // await命令的参数是数值123，它被转成 Promise 对象，并立即resolve
+            async function f() {
+                return await 123;
+            }
+            f().then(v => console.log(v)) // 123
+
+            // catch异常
+            async function f2() {
+                await Promise.reject('出错了');
+            }
+            f2()
+            .then(v => console.log(v))
+            .catch(e => console.log(e))
+            // 出错了
+
+            
+            // 只要一个await语句后面的 Promise 变为reject，那么整个async函数都会中断执行。
+            async function f3() {
+                await Promise.reject('error')
+                await Promise.resolve('success') // 不执行
+            }
+            f3().then(v => console.log(v)).catch(e => console.log(e)) // error
+
+            // 捕获异常
+            async function f4() {
+                try {
+                    await Promise.reject('error')
+                } catch (error) {
+                    console.log(error)
+                }               
+                return await Promise.resolve('success') // 执行
+            }
+            f4().then(v => console.log(v)).catch(e => console.log(e)) // error, success
+
+            // 捕获异常
+            async function f5() {
+                await Promise.reject('error').catch(e => console.log(e))           
+                return await Promise.resolve('success') // 执行
+            }
+            f5().then(v => console.log(v)).catch(e => console.log(e)) // error
+        }
+        a4()
+
+
+        // 使用要点
+        function a5() {
+
+            // bar 要等待foo执行完成才会继续执行
+            let foo = await getFoo();
+            let bar = await getBar();
+            // 可以这样写，同时执行
+            let [foo, bar] = await Promise.all([getFoo(), getBar()])
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Shell Sort</title>
+</head>
+<body>
+  <script>
+    // 希尔排序，不稳定排序，时间复杂度O(n^1.25)
+    // 希尔排序为直接插入排序的加强版，直接插入排序步数增量为1，希尔排序则从数组长度的一半开始，每次折半递减
+
+    // 封装直接插入排序
+    function directInsertSort(arr, gap) {
+      gap  = (gap === undefined) ? 1 : gap // 没有就是1，直接插入排序
+      var len = arr.length
+      var index
+      var currentValue
+      for (var i = gap; i < len; i+=gap) {
+        index = i - gap
+        currentValue = arr[i]
+        while (index >= 0 && arr[index] > currentValue) {
+          // 待比较元素比当前元素大
+          arr[index + gap] = arr[index]
+          index -= gap
+        }
+
+        if (index + gap != i) {
+          arr[index + gap] = currentValue
+        }
+        console.log(arr)
+      }
+      return arr
+    }
+
+    var shellSort = function(arr) {
+      var gap = arr.length >> 1
+      while (gap > 0) {
+        directInsertSort(arr, gap)
+        gap = gap >> 1
+      }
+      return arr
+    }
+
+    var arr = [1, 4, 2, 6, 3]
+    console.log(shellSort(arr))
+  </script>
+</body>
+</html>

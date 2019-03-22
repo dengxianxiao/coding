@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>居中</title>
+  <style>
+    body {
+      display: flex;
+      flex-flow: row wrap;
+    }
+    .common-container {
+      width: 500px;
+      height: 250px;
+      margin: 10px;
+      padding: 10px;
+      border: 1px solid #ccc;
+    }
+    .common-box {
+      width: 80px;
+      height: 50px;
+      margin: 10px;
+      padding: 10px;
+      border: 1px solid #ccc;
+    }
+    .descripte {
+      text-align: center;
+    }
+    .text-align-center {
+      text-align: center;
+    }
+    .margin-center {
+      margin: 0 auto;
+    }
+    .inline-block {
+      display: inline-block;
+    }
+    .flex-justify-center {
+      display: flex;
+      justify-content: center;
+    }
+    .position-relative {
+      position: relative;
+    }
+    .position-center-box-1 {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      margin: -25px 0 0 -40px;
+    }
+    .position-center-box-2 {
+      position: absolute;
+      margin: auto;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
+    .position-transform-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .flex-center {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="common-container text-align-center">
+    <div class="descripte">text-align行内元素水平居中</div>
+    居中内容
+  </div>
+
+  <div class="common-container">
+    <div class="descripte">margin: 0 auto;块级元素水平居中</div>
+    <div class="common-box margin-center">
+      居中内容
+    </div>
+  </div>
+
+  <div class="common-container text-align-center">
+    <div class="descripte">多个块级元素水平居中,子元素inline-block,父元素text-align</div>
+    <div class="common-box inline-block">
+      居中内容
+    </div>
+    <div class="common-box inline-block">
+      居中内容
+    </div>
+    <div class="common-box inline-block">
+      居中内容
+    </div>
+  </div>
+
+  <div class="common-container">
+    <div class="descripte">flex实现多个块级元素水平居中</div>
+    <div class="flex-justify-center">
+      <div class="common-box">
+          居中内容
+      </div>
+      <div class="common-box">
+        居中内容
+      </div>
+      <div class="common-box">
+        居中内容
+      </div>
+    </div>
+  </div>
+
+  <div class="common-container position-relative">
+    <div class="descripte">已知宽度，高度元素水平垂直居中，将元素的top和left属性都设为50%，
+      再利用margin边距，将元素回拉它本身高宽的一半</div>
+    <div class="common-box position-center-box-1">
+      居中内容
+    </div>
+  </div>
+
+  <div class="common-container position-relative">
+    <div class="descripte">未知宽度，高度元素水平垂直居中，利用绝对定位与margin：auto
+      上下左右的距离都是0
+    </div>
+    <div class="common-box position-center-box-2">
+      居中内容
+    </div>
+  </div>
+
+  <div class="common-container position-relative">
+    <div class="descripte">未知宽度，高度元素水平垂直居中，使用绝对定位和transform:translate
+    </div>
+    <div class="common-box position-transform-center">
+      居中内容
+    </div>
+  </div>
+  <div class="common-container flex-center">
+    <div class="common-box">
+      居中内容，flex
+    </div>
+  </div>
+  
+</body>
+</html>

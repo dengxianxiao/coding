@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Response Grid Layout</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    .container {
+      padding-right: 15px;
+      padding-left: 15px;
+      margin: auto;
+    }
+    @media (min-width: 1200px) {
+      .container {
+        width: 1200px;
+      }
+    }
+    @media (min-width: 992px) {
+      .container {
+        width: 970px;
+      }
+    }
+    @media (min-width: 768px) {
+      .container {
+        width: 750px;
+      } 
+    }
+    .row {
+      margin-right: -15px;
+      margin-left: -15px;
+    }
+    .row::after {
+      content: '';
+      clear: both;
+      display: block;
+    }
+    [class*="col-"] {
+      float: left;
+      position: relative;
+      min-height: 1px;
+      padding-right: 15px;
+      padding-left: 15px;
+    }
+
+    .content {
+      border: 1px solid #999;
+      background-color: #eee;
+      /* margin: 10px; */
+      height: 50px;
+    }
+
+    @media (min-width: 768px) {
+      .col-1 {width: 8.33%;}
+      .col-2 {width: 16.66%;}
+      .col-3 {width: 25%;}
+      .col-4 {width: 33.33%;}
+      .col-5 {width: 41.66%;}
+      .col-6 {width: 50%;}
+      .col-7 {width: 58.33%;}
+      .col-8 {width: 66.66%;}
+      .col-9 {width: 75%;}
+      .col-10 {width: 83.33%;}
+      .col-11 {width: 91.66%;}
+      .col-12 {width: 100%;}
+    }
+    @media (max-width: 768px) {
+    .col-xs-1 {width: 8.33%;}
+    .col-xs-2 {width: 16.66%;}
+    .col-xs-3 {width: 25%;}
+    .col-xs-4 {width: 33.33%;}
+    .col-xs-5 {width: 41.66%;}
+    .col-xs-6 {width: 50%;}
+    .col-xs-7 {width: 58.33%;}
+    .col-xs-8 {width: 66.66%;}
+    .col-xs-9 {width: 75%;}
+    .col-xs-10 {width: 83.33%;}
+    .col-xs-11 {width: 91.66%;}
+    .col-xs-12 {width: 100%;}
+  }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-3 col-xs-6"><div class="content"></div></div>
+      <div class="col-3 col-xs-6"><div class="content"></div></div>
+      <div class="col-3 col-xs-6"><div class="content"></div></div>
+      <div class="col-3 col-xs-6"><div class="content"></div></div>
+    </div>
+  </div>
+</body>
+</html>

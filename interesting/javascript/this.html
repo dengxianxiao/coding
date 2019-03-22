@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>this</title>
+</head>
+<body>
+  
+  <script>
+    console.log(this === window) // true全局对象
+    function f1() {
+      'use strict'
+      return this
+    }
+    console.log(`f1 this = ${f1()}`) // undefined，严格模式没有全局this
+    function foo() {
+      let arr = [1]
+      arr.forEach(val => {
+        console.log(this) // Window对象，箭头函数没有默认this，默认调用者的this
+        console.log(val)
+      })
+    }
+    
+    let obj = {
+      prop: 'abc',
+      fn: function() {
+        console.log(this) // obj对象
+        console.log(this.prop)
+        let arr = [1]
+        arr.forEach(val => {
+        console.log(this) // obj对象，箭头函数没有默认this，默认调用者的this
+        console.log(val)
+      })
+      }
+    }
+    obj.fn()
+
+
+    // 情景一：一般的函数调用
+    let a = 'aa'
+    function fn1() {
+      console.log(this.a) // aa，指向全局this
+    }
+
+    // 情景二：作为对象方法的函数
+    var obj2 = {
+      prop: 'obj2 prop',
+      fn2: function() {
+        console.log(this.prop) // obj2 prop  this指向上级对象obj2
+      }
+    }
+
+    // 情景三：作为构造函数
+    function Fn3(x) {
+      this.x = x
+    }
+    let obj3 = new Fn3(100)
+    console.log(obj3.x) // 指向构造的新对象
+    function Fn3s(x) {
+      this.x = x
+      return {
+        x: 1,
+        y: 2
+      }
+    }
+    let obj3s = new Fn3s(100)
+    console.log(obj3s) // {x: 1, y: 2} 如果构造函数有返回一个对象，则指向这个新的对象
+
+    // 情景四：call/apply/bind绑定this
+    function fn4(a, b) {
+      console.log(`a = ${a}, b = ${b}`)
+      console.log(`this.a = ${this.a}, this.b = ${this.b}`)
+    }
+    let obj4 = {
+      a: 1,
+      b: 2
+    }
+    fn4.call(obj4, 3, 4) // a = 3, b = 4  this.a = 1, this.b = 2
+    fn4.apply(obj4, [3, 4]) // a = 3, b = 4  this.a = 1, this.b = 2
+    fn4.bind(obj4, 3, 4)() // a = 3, b = 4  this.a = 1, this.b = 2
+    
+  </script>
+</body>
+</html>

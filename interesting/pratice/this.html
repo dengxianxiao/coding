@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>this</title>
+</head>
+<body>
+  <script>
+    var x = 0
+    function test() {
+        console.log(this.x)
+    }
+    var obj = {}
+    obj.x = 1
+    obj.fn = test
+    obj.fn.call() // 0
+    obj.fn.call(obj) // 1
+
+    // es6 箭头函数中的this, 被设置为他被创建时的上下文
+    var globalObject = this
+    var fn = (() => this)
+    console.log(fn() === globalObject) // true
+
+    // 作为对象的方法调用
+    var obj1 = {
+      fn: fn
+    }
+    console.log(obj1.fn() === globalObject) // true
+    // call, apply, bind也不能改变箭头函数this的值
+    console.log(fn.call(obj1) === globalObject) // true
+
+    var obj2 = {
+      prop: 10,
+      fn1: function () {
+        var x = (() => this)
+        return x
+      },
+      fn2: function () {
+        var x = function () {
+          return this
+        }
+        return x
+      }
+    }
+    // 箭头函数直接调用，指向obj2
+    console.log(obj2.fn1()() === obj2) // true
+    // 普通函数直接调用, 指向全局对象
+    console.log(obj2.fn2()() === globalObject) // true
+    // 如果只是引用，没有调用方法,
+    // 那么调用箭头函数后，this指向window，因为它从 fn1 继承了this。
+    var bar = obj2.fn1
+    console.log(bar()() === globalObject) // true
+  </script>
+</body>
+</html>

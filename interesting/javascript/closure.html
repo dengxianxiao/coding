@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>closure</title>
+</head>
+<body>
+
+    <p id="help">Helpful notes will appear here</p>
+    <p>E-mail: <input type="text" id="email" name="email"></p>
+    <p>Name: <input type="text" id="name" name="name"></p>
+    <p>Age: <input type="text" id="age" name="age"></p>
+  
+  <script>
+    // 闭包：闭包是函数和声明该函数的词法环境的组合。词法作用域中使用的域，
+    // 是变量在代码中声明的位置所决定的。
+    // 闭包是即使被外部函数返回，依然可以访问到外部（封闭）函数作用域的函数
+    // 闭包是由函数以及创建该函数的词法环境组合而成。
+    // 这个环境包含了这个闭包创建时所能访问的所有局部变量
+    function init() {
+      var name = 'deng'
+      function displayName() {
+        alert(name)
+      }
+      return displayName
+    }
+    var myName = init()
+    // myName() // deng
+
+
+    var name1 = "The Window";
+　　var object1 = {
+　　　　name1 : "My Object",
+　　　　getNameFunc : function(){
+　　　　　　return function(){
+　　　　　　　　return this.name1;
+　　　　　　};
+　　　　}
+
+　　};
+// 　　alert(object1.getNameFunc()()); // The Window
+
+　　var name2 = "The Window";
+　　var object2 = {
+　　　　name2 : "My Object",
+
+　　　　getNameFunc : function(){
+　　　　　　var that = this;
+　　　　　　return function(){
+　　　　　　　　return that.name2;
+　　　　　　};
+　　　　}
+　　};
+
+// 　　alert(object2.getNameFunc()()); // My Object
+
+
+
+    // 闭包模拟私有方法
+    var Counter = function() {
+      var privateCounter = 0
+      function changeBy(val) {
+        privateCounter += val
+      }
+      return {
+        increment () {
+          changeBy(1)
+        },
+        decrement () {
+          changeBy(-1)
+        },
+        value: function() {
+          return privateCounter
+        }
+      }
+    }
+    var counter1 = new Counter()
+    var counter2 = new Counter()
+    counter1.increment()
+    console.log(counter1.value()) // 1
+    console.log(counter2.value()) // 0
+
+    // 循环内创建闭包
+    var helpText = [
+      {'id': 'email', 'help': 'Your e-mail address'},
+      {'id': 'name', 'help': 'Your full name'},
+      {'id': 'age', 'help': 'Your age (you must be over 16)'}
+    ];
+    
+    function setupHelp() {    
+      for (var i = 0; i < helpText.length; i++) {
+        // 循环内创建闭包，他们共享了同一个item，回调函数调用时都是指向最后一个
+        var item = helpText[i]
+        var helpElement = document.getElementById('help')
+        document.getElementById(item.id).onfocus = function() {
+          document.getElementById('help').innerHTML = item.help
+        }
+      }
+    }
+    
+    // 解决方案1，使用es6 let声明item变量，创建块级作用域，只在当前循环有效
+    function setupHelp1() {    
+      for (var i = 0; i < helpText.length; i++) {
+        // 循环内创建闭包，他们共享了同一个item，回调函数调用时都是指向最后一个
+        let item = helpText[i]
+        var helpElement = document.getElementById('help')
+        document.getElementById(item.id).onfocus = function() {
+          document.getElementById('help').innerHTML = item.help
+        }
+      }
+    }
+    
+    // 解决方案2，使用工厂函数创建一个新的闭包，不再共享同一个item
+    function makeHelpCallback(help) {
+      return function () {
+        document.getElementById('help').innerHTML = help
+      }
+    }
+    function setupHelp2() {    
+      for (var i = 0; i < helpText.length; i++) {
+        // 循环内创建闭包，他们共享了同一个item，回调函数调用时都是指向最后一个
+        var item = helpText[i]
+        var helpElement = document.getElementById('help')
+        document.getElementById(item.id).onfocus = makeHelpCallback(item.help)
+      }
+    }
+    setupHelp2()
+
+    // 解决方案3，使用匿名闭包，马上把当前循环项的item与事件回调相关联起来
+    function setupHelp3() {    
+      for (var i = 0; i < helpText.length; i++) {
+        // 循环内创建闭包，他们共享了同一个item，回调函数调用时都是指向最后一个
+        (function() {
+          var item = helpText[i]
+          var helpElement = document.getElementById('help')
+          document.getElementById(item.id).onfocus = function() {
+            document.getElementById('help').innerHTML = item.help
+          }
+        })()
+      }
+    }
+    setupHelp3()
+
+    // 模拟私有变量
+    var Person = function() {
+      var name =  'foo'
+      return {
+        setName: function (value) {
+          name = value
+        },
+        getName: function () {
+          return name
+        }
+      }
+    }
+    var person1 = Person()
+    var person2 = Person()
+    console.log(person1.getName()) // foo
+    person1.setName('person1')
+    console.log(person1)
+    console.log(person1.getName()) // person1
+    console.log(person2.getName()) // foo
+
+    // 存储变量
+    function xValue(){
+      var x = 100
+      var value = function() {
+        return x
+      }
+      return value    
+    }
+    var x = xValue()
+    console.log(x())
+
+    // 模拟块级作用域
+    for (var i = 0; i < 5; i++) {
+      (function(i) {
+        setTimeout(function() {
+          console.log(i)
+        }, i * 1000);
+      })(i)
+    }
+  </script>
+</body>
+</html>

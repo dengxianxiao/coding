@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>私有变量</title>
+</head>
+<body>
+  
+  <script>
+    // javaScript 实现私有变量，私有函数
+
+    // 1.命名约定，已下划线'_'开头规范私有变量
+    function fn1() {
+      class shape {
+        constructor (width, height) {
+          this._width = width
+          this._height = height
+        }
+        get area() {
+          return this._width * this._height
+        }
+      }
+    }
+
+    // 2.es6的weakMap
+    // 好处是在遍历属性时或者在执行 JSON.stringify 时不会展示出实例的私有属性
+    // 但它依赖于一个放在类外面的可以访问和操作的 WeakMap 变量
+    function fn2() {
+      const map = new WeakMap()
+      // 创建一个在每个实例中存储私有变量的对象
+      const internal = obj => {
+        if (!map.has(obj)) {
+          map.set(obj, {})
+        }
+        return map.get(obj)
+      }
+      class Shape {
+        constructor (width, height) {
+          internal(this).width = width
+          internal(this).height = height
+        }
+        get area() {
+          return internal(this).width * internal(this).height
+        }
+      }
+
+      const square = new Shape(10, 10)
+      const rectangle = new Shape(10, 20)
+      console.log(square)
+      console.log(rectangle.area)
+      console.log(map)
+    }
+
+    // 3. es6 Symbol
+    function fn3() {
+      const widthSymbol = Symbol('width')
+      const heightSymbol = Symbol('height')
+      class Shape {
+        constructor (width, height) {
+          this[widthSymbol] = width
+          this[heightSymbol] = height
+        }
+        get area() {
+          return this[widthSymbol] * this[heightSymbol]
+        }
+      }
+      const square = new Shape(10, 10)
+      const rectangle = new Shape(10, 20)
+      console.log(square)
+      console.log(rectangle)
+    }
+    
+    // 闭包
+    // 闭包背后的想法是将数据封装在调用时创建的函数作用域内，
+    // 但是从内部返回函数的结果，从而使这一作用域无法从外部访问。
+    function fn4() {
+      function Shape() {
+        // 私有变量集
+        const this$ = {}
+        
+        class Shape {
+          constructor (width, height) {
+            this$.width = width
+            this$.height = height
+          }
+          get area() {
+            return this$.width * this$.height
+          }
+        }
+
+        const instance = new Shape(...arguments)
+        Object.setPrototypeOf(Object.getPrototypeOf(instance), this)
+        // // 我们有一个原型链 Object -> 外部的 Shape -> 内部的 Shape 原型 -> 内部的 Shape
+        return instance
+      }
+
+      const square = new Shape(10, 10);
+      console.log(square.area);  // 100
+      console.log(square.width); // undefined 
+      console.log(square instanceof Shape) // true
+    }
+    
+    // es6 Proxy 这种最好
+    // 允许你有效地将对象包装在名为 Proxy 的对象中，并拦截与该对象的所有交互
+    // Proxy 可以理解成，在目标对象之前架设一层“拦截”，外界对该对象的访问，
+    // 都必须先通过这层拦截，因此提供了一种机制，可以对外界的访问进行过滤和改写
+    function fn5 () {
+      // 定义一个通用拦截访问或修改私有变量的处理对象
+      const handler = {
+        get (target, key) {
+          if (key[0] === '_') {
+            throw new Error('Attempt to access private property')
+          } else if (key === 'toJSON') {
+            // JSON.stringify 会遍历属性，只返回公有属性
+            const obj = {}
+            for (const key in target) {
+              if (key[0] !== '_') {
+                obj[key] = target[key]
+              }
+            }
+            return () => obj
+          }
+          return target[key]
+        },
+        set (target, key, value) {
+          if (key[0] === '_') {
+            throw new Error('Attempt to access private property')
+          }
+          target[key] = value
+        },
+        getOwnPropertyDescriptor (target, key) {
+          // 防止枚举私有变量
+          const desc = Object.getOwnPropertyDescriptor(target, key)
+          if (key[0] === '_') {
+            desc.enumerable = false
+          }
+          return desc
+        }
+      }
+
+      // 命名规范
+      class Shape {
+        constructor(width, height) {
+          this._width = width;
+          this._height = height;
+        }
+        get area() {
+          return this._width * this._height;
+        }
+      }
+
+      const square = new Proxy(new Shape(10, 10), handler)
+      console.log(square)
+      console.log(square.area)
+      // square._width = 20 // error: Attempt to access private property
+      square.aa = 20
+      console.log(JSON.stringify(square)) // {"aa": 20}
+      for (const key in square) {
+        console.log(key)
+      }
+    }
+    
+    // es5以前常用的方法，闭包内创建私有变量
+    function fn6() {
+      function Shape(width, height) {
+        var _width = width
+        var _height = height
+        this.area = function() {
+          return _width * _height
+        }
+      }
+
+      var square = new Shape(10, 10)
+      console.log(square._width) // undefined
+      console.log(square.area())
+    }
+    fn6()
+  </script>
+</body>
+</html>

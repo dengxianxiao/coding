@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    
+    <script>
+    //     ES5 的对象属性名都是字符串，这容易造成属性名的冲突。
+    //     比如，你使用了一个他人提供的对象，但又想为这个对象
+    //     添加新的方法（mixin 模式）, 新方法的名字就有可能与
+    //     现有方法产生冲突。如果有一种机制， 保证每个属性的名字
+    //     都是独一无二的就好了，这样就从根本上防止属性名的冲突。
+    //     这就是 ES6 引入Symbol的原因。
+    // es6有6种原始数据类型：undefined, null, Boolean, String, Number, Symbol
+    let s = Symbol();
+    console.log(typeof s); // "symbol"
+    let s1 = Symbol('foo');
+    console.log(s1);
+    console.log(s1.toString());
+
+    // 一：
+    // 如果 Symbol 的参数是一个对象，就会调用该对象的toString方法，将其转为字符串，然后才生成一个 Symbol 值。
+    const obj = {
+        toString() {
+            return 's2';
+        }
+    }
+    const s2 = Symbol(obj);
+    console.log(s2); // Symbol(s2);
+
+    // 二：
+    // 注意，Symbol函数的参数只是表示对当前 Symbol 值的描述，因此相同参数的Symbol函数的返回值是不相等的。
+    let s3 = Symbol();
+    let s4 = Symbol();
+    s3 === s4; // false
+
+    // 三：
+    // Symbol 值不能与其他类型的值进行运算，会报错。
+    function s5() {
+        let sym = Symbol('My symbol');
+        "your symbol is " + sym
+        // TypeError: can't convert symbol to string
+        `your symbol is ${sym}`
+        // TypeError: can't convert symbol to string
+    }
+    
+    // 四：
+    // Symbol 值可以显式转为字符串,Symbol 值也可以转为布尔值，但是不能转为数值。
+    function s6() {
+        let sym = Symbol('My symbol');
+        String(sym) // 'Symbol(My symbol)'
+        sym.toString() // 'Symbol(My symbol)'
+
+        Boolean(sym) // true
+        !sym  // false
+
+        if (sym) {
+        // ...
+        }
+
+        Number(sym) // TypeError
+        sym + 2 // TypeError
+    }
+
+    // 作为属性名的Symbol, Symbol 值作为对象属性名时，不能用点运算符。
+    // Symbol 值作为属性名时，该属性还是公开属性，不是私有属性
+    function s7() {
+        let mySymbol = Symbol();
+        let a = {};
+        a[mySymbol] = 'Hello a'; // 第一种写法
+        let b = {
+            [mySymbol]: 'Hello b', // 第二种写法
+            [Symbol('haha')]: 'haha',
+            [Symbol('hehe')]: 'hahahaha'
+        }
+        let c = {};
+        Object.defineProperty(c, mySymbol, {value: 'Hello c'}); // 第三种写法
+        // console.log(a, b[mySymbol], c);
+
+    }
+    s7();
+
+    // Symbol的遍历
+    function s8() {
+        let a = Symbol('a');
+        let b = Symbol('b');
+        const obj = {
+            [a]: 'Hello',
+            [b]: 'World'
+        }
+        const objectSymbols = Object.getOwnPropertySymbols(obj); 
+        console.log(objectSymbols); // [Symbol(a), Symbol(b)]
+
+        // 另一个新的 API，Reflect.ownKeys方法可以返回所有类型的键名，包括常规键名和 Symbol 键名。
+        let obj2 = {
+            [Symbol('myKey')]: 1,
+            enum: 2,
+            nonEnum: 3
+        }
+        const objectSymbols2 = Reflect.ownKeys(obj2);
+        console.log(objectSymbols2); // ['enum', 'nonenum', Symbol(myKey)]
+    }
+    s8();
+
+    // 我们希望重新使用同一个 Symbol 值，Symbol.for方法可以做到这一点
+    function s9() {
+        let a1 = Symbol.for('foo');
+        let a2 = Symbol.for('foo');
+        a1 === a2; // true
+
+        // Symbol.keyFor方法返回一个已登记的 Symbol 类型值的key。
+        let s1 = Symbol.for("foo");
+        Symbol.keyFor(s1) // "foo"
+
+        let s2 = Symbol("foo");
+        Symbol.keyFor(s2) // undefined  
+        // 变量s2属于未登记的 Symbol 值，所以返回undefined。
+        // 需要注意的是，Symbol.for为 Symbol 值登记的名字，是全局环境的，
+        // 可以在不同的 iframe 或 service worker 中取到同一个值。
+    }
+    s9()
+    </script>
+</body>
+</html>

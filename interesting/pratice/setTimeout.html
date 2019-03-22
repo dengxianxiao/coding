@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>setTimeout</title>
+</head>
+<body>
+    <input id="oneInput" type="text"><span id="oneSpan"></span>
+    <input id="secondInput" type="text"><span id="secondSpan"></span>
+    <script>
+        // setInterval
+        // for (var i = 0; i < 4; i++) {
+        //     var t = setInterval(function (i) {
+        //         console.log(i);
+        //         clearInterval(t);
+        //     }, 500, i)
+        // }
+        // console.log(i);
+
+
+
+
+        // for (var i = 0; i < 4; i++) {
+        //     var t = setTimeout(function() {
+        //         console.log('in = ', i);
+        //     }, 1000)
+        // }
+        // console.log('out = ', i);
+
+
+        // for (var i = 0; i < 4; i++) {
+        //     var t = setTimeout(function(i) {
+        //         console.log('in i = ', i);
+        //         console.log('in t = ', t);
+        //         clearTimeout(t);
+        //     }, 1000, i)
+        // }
+        // console.log('out i = ', i);
+
+
+
+        // 由于setTimeout() 方法是浏览器 window 对象提供的，
+        // 因此第一个参数函数中的this其实是指向window对象，这跟变量的作用域有关
+        // var a = 1;
+        // var obj = {
+        //     a: 2,
+        //     test: function () {
+        //         setTimeout(function() {
+        //             console.log('window.a = ', a);
+        //             console.log('window.a = ', this.a); // 没有bind是1， 有bind是2
+        //         }.bind(this), 0);
+        //     }
+        // }
+        // obj.test(); 
+
+
+
+        // 因为当按下按键的时候，JavaScript 引擎需要执行 keydown 的事件处理程序，
+        // 然后更新文本框的 value 值，这两个任务也需要按顺序来，事件处理程序执行时，
+        // 更新 value值（是在keypress后）的任务则进入队列等待，
+        // 所以我们在 keydown 的事件处理程序里是无法得到更新后的value的，
+        // 而利用 setTimeout(fn, 0)，我们把取 value 的操作放入队列，
+        // 放在更新 value 值以后，这样便可获取出文本框的值。
+
+        //未使用setTimeout函数的只会获取到输入前的内容，
+        document.getElementById('oneInput').onkeydown = function () {
+            document.getElementById('oneSpan').innerHTML = document.getElementById('oneInput').value;
+        }
+        //而使用setTimeout函数的则会获取到输入的内容
+        document.getElementById('secondInput').onkeydown = function () {
+            setTimeout(function() {
+                document.getElementById('secondSpan').innerHTML = document.getElementById('secondInput').value;
+            }, 0);
+        }
+
+
+
+
+
+        // setTimeout会进入队列中，只有等while执行完才会执行setTimeout的方法
+        // var start = new Date().getTime();
+        // console.log(start);
+        // setTimeout(function() {
+        //     console.log(new Date().getTime() - start);
+        // }, 500)
+        // while (new Date().getTime() - start <= 1000) {}
+    </script>
+</body>
+</html>

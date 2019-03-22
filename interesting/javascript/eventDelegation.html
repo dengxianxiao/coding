@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>事件代理/事件委托</title>
+</head>
+<body>
+  <ul id="ul-event">
+    <li>第一个</li>
+    <li>第二个</li>
+  </ul>
+  <script>
+    // 事件委托是将事件监听器添加到父元素，而不是每个子元素单独设置事件监听器。
+    // 当触发子元素时，事件会冒泡到父元素，监听器就会触发。这种技术的好处是：
+    // 1.内存占用减少，因为只需要一个父元素的事件处理程序，而不必为每个后代都添加事件处理程序。
+    // 2.无需从已删除的元素中解绑处理程序，也无需将处理程序绑定到新元素上。
+
+    // 只需要在父类添加点击事件，子类点击就可以响应
+    function fn1() {
+      document.getElementById('ul-event').addEventListener('click', function(event) {
+        console.log(this) // 整个ul内容
+        console.log(event.target) // 当前点击的li
+      })
+    }
+
+    // 用let 建立块级作用域
+    function fn2() {
+      let lis = document.querySelectorAll('#ul-event li')
+      for(let i = 0; i < lis.length; i++) {
+        lis[i].addEventListener('click', function(event) {
+          console.log(lis[i]) // 当前点击的Li
+        })
+      }
+    }
+    
+    // 使用闭包
+    function fn3() {
+      let lis = document.querySelectorAll('#ul-event li')
+      for(var i = 0; i < lis.length; i++) {
+        (function(i) {
+          lis[i].addEventListener('click', function(event) {
+            console.log(lis[i]) // 当前点击的Li
+          })
+        })(i)
+      }
+    }
+    fn3()
+    
+    function Fn4(a, b) {
+      this.a = a
+      this.b = b
+      this.say = function () {
+        console.log(`this.a = ${a}, this.b = ${b}`)
+      }
+    }
+    let fn4 = new Fn4(1, 2)
+    console.log(fn4.a)
+    fn4.say()
+  </script>
+</body>
+</html>

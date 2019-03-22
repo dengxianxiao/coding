@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>QuickSort</title>
+</head>
+<body>
+  <script>
+    
+    function quickSort(arr) {
+      if (!Array.isArray(arr) || arr.length === 0) {
+        return []
+      }
+      var leftArr = []
+      var rightArr = []
+      var centerIndex = Math.floor(arr.length / 2)
+      var centerValue = arr.splice(centerIndex, 1)
+      for (var i = 0; i < arr.length; i++) {
+        if (arr[i] < centerValue) {
+          leftArr.push(arr[i])
+        } else {
+          rightArr.push(arr[i])
+        }
+      }
+      return quickSort(leftArr).concat(centerValue, quickSort(rightArr))
+    }
+    var arr = [1, 3, 5, 2, 4, 9]
+    console.log(quickSort(arr))
+  </script>
+</body>
+</html>

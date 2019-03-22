@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        // 一：        
+        // for循环还有一个特别之处，就是设置循环变量的那部分是一个父作用域，而循环体内部是一个单独的子作用域。
+        // 输出3个aaa
+        for (let i = 0; i < 3; i++){
+            let i = 'aaa';
+            console.log(i);
+        }
+
+        // 二：
+        // 上面代码中，存在全局变量tmp，但是块级作用域内let又声明了一个局部变量tmp，
+        // 导致后者绑定这个块级作用域，所以在let声明变量前，对tmp赋值会报错。
+        // ES6 明确规定，如果区块中存在let和const命令，
+        // 这个区块对这些命令声明的变量，从一开始就形成了封闭作用域。凡是在声明之前就使用这些变量，就会报错。
+        // 总之，在代码块内，使用let命令声明变量之前，该变量都是不可用的。
+        // 这在语法上，称为“暂时性死区”（temporal dead zone，简称 TDZ）。
+        var tmp = 'abc';
+        if (true) {
+            // tmp = 'ccc'; // ReferenceError: tmp is not defined
+            let tmp;
+        }
+
+        // 三：
+        // const如果声明一个对象，只表示对象的地址不可改变，值可以改变，如果要冻结这个对象，
+        // 应该使用Object.freeze()
+        const foo = Object.freeze({});
+        // 常规模式时，下面一行不起作用；
+        // 严格模式时，该行会报错
+        foo.prop = 123;
+        console.log(foo);
+        // 除了将对象本身冻结，对象的属性也应该冻结。下面是一个将对象彻底冻结的函数。
+        var constantize = (obj) => {
+            Object.freeze(obj);
+            Object.keys(obj).forEach((key, i) => {
+                if (typeof obj[key] === 'object') {
+                    constantize(obj);
+                }
+            })
+        }
+        // Object.keys() 方法会返回一个由一个给定对象的自身可枚举属性组成的数组
+        let obj = { foo: "bar", baz: 42 }, 
+        keys = Object.keys(obj); // ['foo', 'baz']
+
+        // 四：
+        // es6声明对象的6种方法
+        // 包含es5的两种：var ,function, es6的四种：let, const, import, class
+
+        // 五：
+        // 顶层对象属性
+        // 顶层对象，在浏览器环境指的是window对象，在 Node 指的是global对象
+        window.a = 1;
+        a // 1
+        b = 2;
+        window.b; // 2
+
+        let c = 3; // 全局变量c由let命令声明，所以它不是顶层对象的属性，返回undefined。
+        window.c; // undefined
+    </script>
+</body>
+</html>

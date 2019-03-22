@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Array Repeat</title>
+</head>
+<body>
+  <script>
+    var arr = [1, 2, 2, 3, 4, 4, 5]
+    // 1. 定义一个空数组，循环比较，逐个放入
+    function unique1(arr) {
+      if (!Array.isArray(arr)) {
+        return
+      }
+      var uniqueArr = []
+      for (var i = 0; i < arr.length; i++) {
+        for (j = 0; j < uniqueArr.length; j++) {
+          if (arr[i] === uniqueArr[j]) {
+            break
+          }
+        }
+        if (j === uniqueArr.length) {
+          uniqueArr.push(arr[i])
+        }
+      }
+      return uniqueArr
+    }
+    console.log(unique1(arr))
+
+    // 2. 定义一个空数组，使用indexOf判断是否存在
+    function unique2(arr) {
+      var uniqueArr = []
+      for (var i = 0; i < arr.length; i++) {
+        if (uniqueArr.indexOf(arr[i]) === -1) {
+          uniqueArr.push(arr[i])
+        }
+      }
+      return uniqueArr
+    }
+    console.log(unique2(arr))
+
+    // 3. 先排序后去重
+    function unique3(arr) {
+      var uniqueArr = []
+      var sortArr = arr.sort()
+      var seen
+      for (var i = 0; i < sortArr.length; i++) {
+        if (i === 0 || seen !== sortArr[i]) {
+          uniqueArr.push(sortArr[i])
+        }
+        seen =sortArr[i]
+      }
+      return uniqueArr
+    }
+    console.log(unique3(arr))
+
+    // 4. es5 filter 方法
+    function unique4(arr) {
+      return arr.filter((item, index, array) => array.indexOf(item) === index)
+    }
+    console.log(unique4(arr))
+
+    // 5. es6 set 方法
+    function unique5(arr) {
+      return [...new Set(arr)]
+    }
+    console.log(unique5(arr))
+
+    // 6. es6 Map 方法
+    
+  </script>
+</body>
+</html>

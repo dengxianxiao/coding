@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Data Binding</title>
+</head>
+<body>
+  <div id="test">
+    12
+  </div>
+  <script>
+    function Dep() {
+      this.subs = []
+
+      this.addSub = function(watcher) {
+        this.subs.push(watcher)
+      }
+
+      this.notify = function() {
+        this.subs.forEach(function(watcher) {
+          watcher.update()
+        })
+      }
+    }
+
+    function Watcher(fn) {
+      this.update = function() {
+        Dep.target = this
+        fn()
+        Dep.target = null
+      }
+      this.update()
+    }
+
+    function Obsever(obj, key, value) {
+      var dep = new Dep()
+      if (Object.prototype.toString.call(value) === '[object Object]') {
+        Object.keys(value).forEach(function(key) {
+          new Obsever(value, key, value[key])
+        })
+      }
+
+      Object.defineProperty(obj, key, {
+        enumerable: true,
+        configurable: true,
+        get: function() {
+          if (Dep.target) {
+            dep.addSub(Dep.target)
+          }
+          return value
+        },
+        set: function(newVal) {
+          value = newVal
+          dep.notify()
+        }
+      })
+    }
+
+    var obj = {
+      a: 1,
+      b: 2,
+      c: 3
+    }
+    Object.keys(obj).forEach(function(key) {
+      new Obsever(obj, key, obj[key])
+    })
+    new Watcher(function() {    
+      document.querySelector("#test").innerHTML = obj.a
+    })
+  </script>
+</body>
+</html>

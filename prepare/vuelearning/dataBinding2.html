@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Data Binding 2</title>
+</head>
+<body>
+  <script>
+    
+    // 初始对象
+    class MVVM {
+      constructor (options) {
+        this.options = options
+        this.data = this._data = this.options.data
+        this.init()
+      }
+      init () {
+        let _this = this
+        Object.keys(this.data).forEach(function(key) {
+          _this._proxyData(key)
+        })
+        observe(this.data)
+      }
+      $watch (key, cb, options) {
+        new Watcher(this, key, cb)
+      }
+      _proxyData(key) {
+        var _this = this
+        Object.defineProperty(_this, key, {
+          configurable: false,
+          enumerable: true,
+          get: function proxyGetter() {
+              return _this.data[key]
+          },
+          set: function proxySetter(newVal) {
+              _this.data[key] = newVal
+          }
+        })
+      }
+    }
+
+    // 监听数据对象
+    class Observer {
+      constructor(data) {
+        this.data = data
+        this.dep = new Dep()
+        this.walk(data)
+      }
+      // 遍历初始数组对象进行监听
+      walk (data) {
+        const keys = Object.keys(data)
+        for (let i = 0; i < keys.length; i++) {
+          this.defineReactive(this.data, keys[i], data[keys[i]])
+        }
+      }
+      defineReactive (data, key, value) {
+        const dep = new Dep()
+        let childOb = observe(value) // 值是对象，递归遍历
+        Object.defineProperty(data, key, {
+          enumerable: true,
+          configurable: false,
+          get: function() {
+            if (Dep.target) {
+              dep.depend() // 添加依赖
+              if (childOb) {
+                childOb.dep.depend() 
+              }
+            }
+            return value
+          },
+          set: function(newVal) {
+            if (newVal === value) {
+              return
+            }
+            value = newVal
+            childOb = observe(newVal) // 新的值是对象，遍历监听
+            dep.notify() // 通知订阅者
+          }
+        })
+
+      }
+    }
+    function observe (obj) {
+      if (!obj || typeof obj !== 'object') {
+        return
+      }
+      return new Observer(obj)
+    }
+
+    // 依赖对象
+    let uid = 0
+    class Dep {
+      constructor () {
+        this.id = uid++
+        this.subs = [] // 存放Watcher对象
+      }
+      addSub (sub) {
+        this.subs.push(sub)
+      }
+      removeSub (sub) {
+        let index = this.subs.indexOf(sub)
+        if (index !== -1) {
+          this.subs.splice(index, 1)
+        }
+      }
+      depend () {
+        if (Dep.target) {
+          Dep.target.addDep(this)
+        }
+      }
+      notify () {
+        this.subs.forEach(function(sub) {
+          sub.update()
+        })
+      }
+    }
+
+    // 观察者对象
+    class Watcher {
+      constructor (vm, expOrFn, cb) {
+        this.vm = vm
+        this.expOrFn = expOrFn
+        this.cb = cb
+        this.deps = []
+        this.depIds = new Set()
+        if (typeof expOrFn === 'function') {
+          this.getter = expOrFn
+        } else {
+          this.getter = this.parsePath(expOrFn)
+        }
+        this.value = this.get()
+      }
+      update () {
+        let newval = this.get()
+        let oldVal = this.value
+        if (newval !== oldVal) {
+          this.value = newval
+          this.cb.call(this.vm, newval, oldVal) // 值改变调用回调函数
+        }
+      }
+      addDep (dep) {
+        const id = dep.id
+        if (!this.depIds.has(id)) {
+          this.depIds.add(id)
+          this.deps.push(dep)
+          dep.addSub(this)
+        }
+      }
+      get () {
+        Dep.target = this
+        let vm = this.vm
+        let value = this.getter.call(vm, vm)
+        Dep.target = null
+        return value
+      }
+      parsePath (exp) {
+        if (/[^\w.$]/.test(exp)) return
+
+        var exps = exp.split('.')
+
+        return function(obj) {
+          for (var i = 0, len = exps.length; i < len; i++) {
+            if (!obj) return
+            obj = obj[exps[i]]
+          }
+          return obj
+        }
+      }
+    }
+
+
+
+
+    let vm = new MVVM({
+      el: '#mvvm-app',
+      data: {
+        fatherStr: 'hello',
+        child: {
+          childStr: 'world'
+        }
+      }
+    })
+    vm.$watch('child.childStr', function() {
+      console.log(arguments)
+    })
+    // vm.child.childStr = 'worlds'
+  </script>
+</body>
+</html>
